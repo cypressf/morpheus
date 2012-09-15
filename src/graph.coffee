@@ -29,12 +29,10 @@ chartO.selectAll("rect")
             return i * 20)
     .attr("y",
         (d, i) ->
-            overviewIntervals = $('#overview-wrapper').height() / 100.0
-            return d.start*overviewIntervals)
+            return d.start*10)
     .attr("height",
             (d, i) ->
-                overviewIntervals = $('#overview-wrapper').height() / 100.0
-                return (d.end - d.start) * overviewIntervals)
+                return (d.end - d.start) * 10)
     .attr("width", 20)
 
 chartC.selectAll("rect")

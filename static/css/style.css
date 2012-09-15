@@ -27,11 +27,12 @@ a:hover{
 body, html {
     height: 100%;
 }
+
 #overview-wrapper {
     height: 30%;
 }
 #overview-chart rect {
-    stroke: white;
+    //stroke: white;
     //fill: steelblue;
 }
 #current-wrapper {
