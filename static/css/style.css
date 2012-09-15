@@ -23,3 +23,21 @@ a {
 a:hover{
     background:#171717;
 }
+
+body, html {
+    height: 100%;
+}
+#overview-wrapper {
+    height: 30%;
+}
+#overview-chart rect {
+    stroke: white;
+    //fill: steelblue;
+}
+#current-wrapper {
+    height: 60%;
+}
+#current-chart rect {
+    stroke: white;
+    fill: steelblue;
+}
