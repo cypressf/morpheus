@@ -2,9 +2,9 @@
 window.morpheus =
     getDataForUser : (username, earliestDate=null, latestDate=null, callback) ->
         if startTime? and endTime?
-            $.getJSON 'http://165.123.224.140:8000/data/?username='+username+'&'+'earliestdate='+earliestDate+'&'+'latestdate='+latestDate, callback
+            $.getJSON '/data/?username='+username+'&'+'earliestdate='+earliestDate+'&'+'latestdate='+latestDate, callback
         else
-            $.getJSON 'http://165.123.224.140:8000/data/?username='+username, callback
+            $.getJSON '/data/?username='+username, callback
 
 '''
 putSleepForUser : (username, start, end, callback) ->
