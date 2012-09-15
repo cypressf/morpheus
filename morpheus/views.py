@@ -18,19 +18,19 @@ import json
 def home(request):
     """Home view, displays login mechanism"""
     if request.user.is_authenticated():
-        return HttpResponseRedirect('done')
+        return HttpResponseRedirect('user/'+request.user.username)
     else:
         return render_to_response('home.html', {'version': version},
                                   RequestContext(request))
 
 @login_required
-def done(request):
+def graph(request):
     """Login complete view, displays user data"""
     ctx = {
         'version': version,
         'last_login': request.session.get('social_auth_last_login_backend')
     }
-    return render_to_response('done.html', ctx, RequestContext(request))
+    return render_to_response('graph.html', ctx, RequestContext(request))
 
 def logout(request):
     """Logs out user"""
@@ -39,14 +39,16 @@ def logout(request):
 
 def data(request):
     if 'earliestdate' in request.GET:
-        earliestdate = request.GET['earliestdate']
+        earliestdate = datetime.fromtimestamp(request.GET['earliestdate'] / 1000.0)
     if 'earliestdate' in request.GET:
-        latestdate = request.GET['latestdate']
+        latestdate = datetime.fromtimestamp(request.GET['latestdate'] / 1000.0)
     if 'username' in request.GET:
         username = request.GET['username']
     sleeps_json = json.dumps([])
     if username:
         u = User.objects.filter(username__exact=username)
+        if earliestdate:
+            u = u.filter()
         if u:
             sleeps = u[0].sleep_set.all()
             sleeps_dict = [{"start": s.start.isoformat(), "end": s.end.isoformat()} for s in sleeps]
