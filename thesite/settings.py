@@ -83,6 +83,15 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
+# Don't forget to use absolute paths, not relative paths.
+TEMPLATE_DIRS = (
+    # site-wide templates. per-app templates are stored in app/templates
+    # and are automatically loaded by the app_directories template loader
+    # (see settings.py)
+    os.getcwd() + '/templates'
+)
+
+
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -126,6 +135,7 @@ AUTHENTICATION_BACKENDS = (
     #'social_auth.backends.google.GoogleOAuth2Backend',
     #'social_auth.backends.google.GoogleBackend',
     'social_auth.backends.OpenIDBackend',
+    'social_auth.backends.google.GoogleBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -138,13 +148,14 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 #TODO: Change this to what we want default names to be
 SOCIAL_AUTH_DEFAULT_USERNAME = 'new_social_auth_user'
+SOCIAL_AUTH_COMPLETE_URL_NAME     = 'socialauth_complete'
 
 #TODO: FIX TO BE ACTUAL THINGS
 #GITHUB_APP_ID = os.environ['GITHUB_APP_ID']
 #GITHUB_API_SECRET = os.environ['GITHUB_API_SECRET']
 
 LOGIN_URL          = '/login-form/'
-LOGIN_REDIRECT_URL = '/logged-in/'
+LOGIN_REDIRECT_URL = '/'
 LOGIN_ERROR_URL    = '/login-error/'
 
 # A sample logging configuration. The only tangible logging
