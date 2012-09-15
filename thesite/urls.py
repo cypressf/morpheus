@@ -4,7 +4,8 @@ import social_auth
 from django.contrib import admin
 admin.autodiscover()
 
-urlpatterns = patterns('',
+
+urlpatterns = patterns('morpheus.views',
     # Examples:
     # url(r'^$', 'thesite.views.home', name='home'),
     # url(r'^thesite/', include('thesite.foo.urls')),
@@ -14,6 +15,7 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
-    url(r'^login/$', include('social_auth.urls')),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^$', 'home', name='home'),
+    # url(r'', include('social_auth.urls')),
+    # url(r'^admin/', include(admin.site.urls)),
 )
