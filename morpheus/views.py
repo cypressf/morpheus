@@ -1,4 +1,6 @@
 from django.http import HttpResponseRedirect
+from django.http import HttpResponse
+
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
@@ -36,15 +38,18 @@ def logout(request):
     return HttpResponseRedirect('/')
 
 def data(request):
-    earliestdate = request.GET['earliestdate'] or None
-    latestdate = request.GET['latestdate'] or None
-    username = request.GET['username'] or None
+    if 'earliestdate' in request.GET:
+        earliestdate = request.GET['earliestdate']
+    if 'earliestdate' in request.GET:
+        latestdate = request.GET['latestdate']
+    if 'username' in request.GET:
+        username = request.GET['username']
     sleeps_json = json.dumps([])
     if username:
         u = User.objects.filter(username__exact=username)
         if u:
             sleeps = u[0].sleep_set.all()
-            sleeps_dict = [{"start": s.start, "end": s.end} for s in sleeps]
+            sleeps_dict = [{"start": s.start.isoformat(), "end": s.end.isoformat()} for s in sleeps]
             sleeps_json = json.dumps(sleeps_dict)
 
     return HttpResponse(sleeps_json, mimetype="application/json")
