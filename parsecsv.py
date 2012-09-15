@@ -4,8 +4,11 @@
 import csv
 import datetime
 import random
+import os
+import sys
 
 # Import django stuff
+sys.path.append('.')
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "thesite.settings")
 from django.conf import settings
 from morpheus.models import Sleep
