@@ -12,4 +12,22 @@ from social_auth.utils import setting
 
 def home(request):
     """Home view, displays login mechanism"""
-    return render_to_response('home.html', RequestContext(request))
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('done')
+    else:
+        return render_to_response('home.html', {'version': version},
+                                  RequestContext(request))
+
+@login_required
+def done(request):
+    """Login complete view, displays user data"""
+    ctx = {
+        'version': version,
+        'last_login': request.session.get('social_auth_last_login_backend')
+    }
+    return render_to_response('done.html', ctx, RequestContext(request))
+
+def logout(request):
+    """Logs out user"""
+    auth_logout(request)
+    return HttpResponseRedirect('/')
