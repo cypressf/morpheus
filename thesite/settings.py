@@ -1,4 +1,5 @@
 # Django settings for thesite project.
+import os
 import dj_database_url
 
 DEBUG = True
@@ -11,7 +12,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASES = {
-    'default': dj_database_url.config(default='postgres://localhost')
+    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
 }
 
 # Local time zone for this installation. Choices can be found here:
