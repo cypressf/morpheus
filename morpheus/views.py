@@ -38,9 +38,16 @@ def logout(request):
     return HttpResponseRedirect('/')
 
 def data(request):
+    """
+    Given a GET request with "earliestdate", "latestdate", and "username",
+    return a JSON string in the format
+    [{"start": date1, "end": date2}, {"start": date3, "end": date4}]
+    where the dates are iso format date strings, representing the start and end
+    of a sleep session.
+    """
     if 'earliestdate' in request.GET:
         earliestdate = datetime.fromtimestamp(request.GET['earliestdate'] / 1000.0)
-    if 'earliestdate' in request.GET:
+    if 'latestdate' in request.GET:
         latestdate = datetime.fromtimestamp(request.GET['latestdate'] / 1000.0)
     if 'username' in request.GET:
         username = request.GET['username']
@@ -55,3 +62,12 @@ def data(request):
             sleeps_json = json.dumps(sleeps_dict)
 
     return HttpResponse(sleeps_json, mimetype="application/json")
+
+def post_data(request):
+    """
+    Given a POST request, with the headers "username", "start", and "end", 
+    put the data in the database and return a confirmation when complete.
+    """
+    pass
+
+
