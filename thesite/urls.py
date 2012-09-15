@@ -19,5 +19,6 @@ urlpatterns = patterns('morpheus.views',
     url(r'^done/$', 'done', name='done'),
     url(r'^logout/$', 'logout', name='logout'),
     url(r'', include('social_auth.urls')),
+    url(r'^data/$', 'data', name='data'),
     url(r'^admin/', include(admin.site.urls)),
 )
