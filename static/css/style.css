@@ -1,0 +1,25 @@
+body{
+    background:#222;
+    color:#eee;
+    font:1em sans-serif;
+}
+h1{
+    font-size:4em;
+    padding:1em;
+    text-align:center;
+}
+a {
+    color:#eee;
+    margin:0 auto;
+    font-size:2em;
+    background:#111;
+    padding:1em;
+    width:10em;
+    text-align:center;
+    border-radius:0.5em;
+    text-decoration:none;
+    display:block;
+}
+a:hover{
+    background:#171717;
+}

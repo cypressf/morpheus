@@ -2,13 +2,9 @@
 {% load url from future %}
 
 {% block content %}
-  <ul>
   {% for name in social_auth.backends.openid %}
   {% if name == 'google' %}
-    <li>
-      <a rel="nofollow" href="{% url "socialauth_begin" name %}">{{ name|title }}</a>
-    </li>
+    <a rel="nofollow" href="{% url "socialauth_begin" name %}">Login with {{ name|title }}</a>
     {% endif %}
   {% endfor %}
-  </ul>
 {% endblock content %}
