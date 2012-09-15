@@ -4,25 +4,39 @@
 import csv
 import datetime
 import random
-# TODO: Import django stuff
+
+# Import django stuff
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "thesite.settings")
+from django.conf import settings
+from morpheus.models import Sleep
+from django.contrib.auth.models import User
+
 
 sleepdata = dict()
 
-class Sleep():
-    # XXX: Actually get rid of this and import django version
-    def __init__(self, start=None, end=None, user=None):
-        pass
-
-    def save(self):
-        pass
-
 def makeUserFromName(nameStr):
-    # TODO: Implement using Django
-    pass
+    """
+    Given a name, create a user if it doesn't exist already.
+
+    Return the user.
+    """
+    current_users = User.objects.filter(username__exact=nameStr)
+    if current_users:
+        return current_users[0]
+    else:
+        return User.objects.create_user(nameStr, password="dreams")
 
 def getUserByName(nameStr):
-    # TODO: Implement using Django
-    return None
+    """
+    Given a name string, return a django user object.
+
+    If the user doesn't exist, return False.
+    """
+    user = User.objects.filter(username__exact=nameStr)
+    if user:
+        return user[0]
+    else:
+        return False
 
 
 class SleepDurObject():
