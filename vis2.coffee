@@ -17,10 +17,28 @@ for i in [1..200]
     s = new Sleep mainUser, sTime, eTime
     mainUser.sleeps.push s
 
-chart = d3.select("#overview-chart")
+chartO = d3.select("#overview-chart")
+chartC = d3.select("#current-chart")
 
-chart.selectAll("rect")
+
+chartO.selectAll("rect")
     .data(mainUser.sleeps)
+    .enter().append("rect")
+    .attr("x",
+        (d, i) ->
+            return i * 20)
+    .attr("y",
+        (d, i) ->
+            overviewIntervals = $('#overview-wrapper').height() / 100.0
+            return d.start*overviewIntervals)
+    .attr("height",
+            (d, i) ->
+                overviewIntervals = $('#overview-wrapper').height() / 100.0
+                return (d.end - d.start) * overviewIntervals)
+    .attr("width", 20)
+
+chartC.selectAll("rect")
+    .data(mainUser.sleeps[-7..])
     .enter().append("rect")
     .attr("x",
         (d, i) ->

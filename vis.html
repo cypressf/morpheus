@@ -11,6 +11,10 @@
         <svg id='overview-chart'>
         </svg>
     </div>
+    <div id='current-wrapper'>
+        <svg id='current-chart'>
+        </svg>
+    </div>
 </body>
 <style>
     body, html {
@@ -22,6 +26,13 @@
     #overview-chart rect {
         stroke: white;
         //fill: steelblue;
+    }
+    #current-wrapper {
+        height: 60%;
+    }
+    #current-chart rect {
+        stroke: white;
+        fill: steelblue;
     }
 </style>
 <script src='compiledassets/api.js'></script>
