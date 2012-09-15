@@ -3,6 +3,7 @@
 
 import csv
 import datetime
+import random
 # TODO: Import django stuff
 
 sleepdata = dict()
@@ -42,12 +43,15 @@ class SleepDurObject():
             day = int(day)
             month = int(month)
             year = int(year)
+            d = float(self.duration)
             # Note: Hour is int in range 0-24
-            offset = 0 #TODO: Randomize?
-            shour = 0 + offset
-            ehour = float(self.duration) + offset
-            sdate = datetime.datetime(year, month, day, int(shour), int((shour-int(shour))*60.0))
-            edate = datetime.datetime(year, month, day, int(ehour), int((shour-int(shour))*60.0))
+            randomHourOffset = 0 #random.randint(0,24) # TODO: Choose a good range for this random number generator
+            # Duration will still be accurate, but start and end time will exist and be fake
+            shour = datetime.timedelta(hours=randomHourOffset)
+            ehour = datetime.timedelta(hours=randomHourOffset+int(d), minutes=int((d-int(d))*60.0))
+
+            sdate = datetime.datetime(year, month, day) + shour
+            edate = datetime.datetime(year, month, day) + ehour
             usr = getUserByName(self.person)
             slp = Sleep(start=sdate, end=edate, user=usr)
             slp.save()
