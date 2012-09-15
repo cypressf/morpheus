@@ -135,6 +135,7 @@ AUTHENTICATION_BACKENDS = (
     #'social_auth.backends.google.GoogleOAuth2Backend',
     #'social_auth.backends.google.GoogleBackend',
     'social_auth.backends.OpenIDBackend',
+    'social_auth.backends.google.GoogleBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -154,7 +155,7 @@ SOCIAL_AUTH_COMPLETE_URL_NAME     = 'socialauth_complete'
 #GITHUB_API_SECRET = os.environ['GITHUB_API_SECRET']
 
 LOGIN_URL          = '/login-form/'
-LOGIN_REDIRECT_URL = '/logged-in/'
+LOGIN_REDIRECT_URL = '/'
 LOGIN_ERROR_URL    = '/login-error/'
 
 # A sample logging configuration. The only tangible logging
