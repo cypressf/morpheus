@@ -16,6 +16,8 @@ urlpatterns = patterns('morpheus.views',
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
     url(r'^$', 'home', name='home'),
-    # url(r'', include('social_auth.urls')),
-    # url(r'^admin/', include(admin.site.urls)),
+    url(r'^done/$', 'done', name='done'),
+    url(r'^logout/$', 'logout', name='logout'),
+    url(r'', include('social_auth.urls')),
+    url(r'^admin/', include(admin.site.urls)),
 )
