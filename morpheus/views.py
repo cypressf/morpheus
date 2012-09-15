@@ -9,6 +9,9 @@ from social_auth.signals import pre_update
 #from social_auth.backends.contrib
 from social_auth import __version__ as version
 from social_auth.utils import setting
+from datetime import datetime
+from django.contrib.auth.models import User
+import json
 
 def home(request):
     """Home view, displays login mechanism"""
@@ -31,3 +34,17 @@ def logout(request):
     """Logs out user"""
     auth_logout(request)
     return HttpResponseRedirect('/')
+
+def data(request):
+    earliestdate = request.GET['earliestdate'] or None
+    latestdate = request.GET['latestdate'] or None
+    username = request.GET['username'] or None
+    sleeps_json = json.dumps([])
+    if username:
+        u = User.objects.filter(username__exact=username)
+        if u:
+            sleeps = u[0].sleep_set.all()
+            sleeps_dict = [{"start": s.start, "end": s.end} for s in sleeps]
+            sleeps_json = json.dumps(sleeps_dict)
+
+    return HttpResponse(sleeps_json, mimetype="application/json")
