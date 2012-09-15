@@ -13,6 +13,7 @@ from social_auth import __version__ as version
 from social_auth.utils import setting
 from datetime import datetime
 from django.contrib.auth.models import User
+from morpheus.models import Sleep
 import json
 
 def home(request):
@@ -45,21 +46,23 @@ def data(request):
     where the dates are iso format date strings, representing the start and end
     of a sleep session.
     """
-    if 'earliestdate' in request.GET:
-        earliestdate = datetime.fromtimestamp(request.GET['earliestdate'] / 1000.0)
-    if 'latestdate' in request.GET:
-        latestdate = datetime.fromtimestamp(request.GET['latestdate'] / 1000.0)
+    sleeps = []
+    u = None
     if 'username' in request.GET:
         username = request.GET['username']
-    sleeps_json = json.dumps([])
-    if username:
-        u = User.objects.filter(username__exact=username)
-        if earliestdate:
-            u = u.filter()
-        if u:
-            sleeps = u[0].sleep_set.all()
-            sleeps_dict = [{"start": s.start.isoformat(), "end": s.end.isoformat()} for s in sleeps]
-            sleeps_json = json.dumps(sleeps_dict)
+        u = User.objects.filter(username__exact = username)
+        print u
+    if u:
+        sleeps = Sleep.objects.filter(user__username = username)
+    if u and ('earliestdate' in request.GET):
+        earliestdate = datetime.fromtimestamp(request.GET['earliestdate'] / 1000.0)
+        sleeps = sleeps.filter(start__gte = earliestdate)
+    if u and ('latestdate' in request.GET):
+        latestdate = datetime.fromtimestamp(request.GET['latestdate'] / 1000.0)
+        sleeps = sleeps.filter(end_lte = latestdate)
+
+    sleeps_dict = [{"start": s.start.isoformat(), "end": s.end.isoformat()} for s in sleeps]
+    sleeps_json = json.dumps(sleeps_dict)
 
     return HttpResponse(sleeps_json, mimetype="application/json")
 
