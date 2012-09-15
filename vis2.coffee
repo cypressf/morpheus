@@ -9,24 +9,15 @@ class User
     constructor: (@name) ->
         @sleeps = []
 
+
 mainUser = new User 'Test'
-for i in [1..20]
+for i in [1..200]
     sTime = randint 0, 5
     eTime = sTime + randint 3, 9
     s = new Sleep mainUser, sTime, eTime
     mainUser.sleeps.push s
 
-
-chart = d3.select("body").append("svg")
-    .attr("class", "chart")
-    .attr("height", 500)
-    .attr("width", 20 * mainUser.sleeps.length)
-
-x = d3.scale.linear()
-    .domain([0, d3.max(mainUser.sleeps)])
-    .range([0, 500])
-
-console.log d3.max(mainUser.sleeps)
+chart = d3.select("#overview-chart")
 
 chart.selectAll("rect")
     .data(mainUser.sleeps)
@@ -36,8 +27,8 @@ chart.selectAll("rect")
             return i * 20)
     .attr("y",
         (d, i) ->
-            return d.start*20)
+            return d.start*10)
     .attr("height",
             (d, i) ->
-                return (d.end - d.start) * 20)
+                return (d.end - d.start) * 10)
     .attr("width", 20)

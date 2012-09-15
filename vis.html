@@ -2,22 +2,28 @@
 <head>
     <title>Morpheus</title>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
-    <script src='raphael-min.js'></script>
     <script src='d3.v2.js'></script>
 </head>
+
+
 <body>
+    <div id='overview-wrapper'>
+        <svg id='overview-chart'>
+        </svg>
+    </div>
 </body>
 <style>
-    body, html, #graph {
+    body, html {
         height: 100%;
     }
-    #graph {
-        //background-color: blue;
+    #overview-wrapper {
+        height: 30%;
     }
-    .chart rect {
+    #overview-chart rect {
         stroke: white;
-        fill: steelblue;
+        //fill: steelblue;
     }
 </style>
+<script src='compiledassets/api.js'></script>
 <script src='compiledassets/vis2.js'></script>
 
