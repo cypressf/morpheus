@@ -50,3 +50,4 @@ chartC.selectAll("rect")
             (d, i) ->
                 return (d.end - d.start) * 10)
     .attr("width", 20)
+

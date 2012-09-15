@@ -1,6 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
+<!--
 <h1>{{user.first_name}} {{user.last_name}}, you're logged in</h1>
-
+-->
+<!--
 <a href="/logout">logout</a>
+-->
+  <div id='overview-wrapper'>
+      <svg id='overview-chart'>
+      </svg>
+  </div>
+  <div id='current-wrapper'>
+      <svg id='current-chart'>
+      </svg>
+  </div>
+
 {% endblock content %}
+
+{% block js %}
+  <script src='/static/js/graph.js'></script>
+{% endblock js %}
