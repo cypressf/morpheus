@@ -120,12 +120,28 @@ INSTALLED_APPS = (
 )
 
 AUTHENTICATION_BACKENDS = (
+    # TODO: Stuff we might want to add:
     #'social_auth.backends.twitter.TwitterBackend',
     #'social_auth.backends.facebook.FacebookBackend',
     #'social_auth.backends.google.GoogleOAuth2Backend',
     #'social_auth.backends.google.GoogleBackend',
     'social_auth.backends.OpenIDBackend',
+    'django.contrib.auth.backends.ModelBackend',
 )
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'social_auth.context_processors.social_auth_by_type_backends',
+    # NOTE: social_auth_by_type_backends: Simiar to social_auth_backends
+    # but each value is grouped by backend type openid, oauth2 and oauth.
+)
+
+#TODO: Change this to what we want default names to be
+SOCIAL_AUTH_DEFAULT_USERNAME = 'new_social_auth_user'
+
+#TODO: FIX TO BE ACTUAL THINGS
+#GITHUB_APP_ID = os.environ['GITHUB_APP_ID']
+#GITHUB_API_SECRET = os.environ['GITHUB_API_SECRET']
 
 LOGIN_URL          = '/login-form/'
 LOGIN_REDIRECT_URL = '/logged-in/'
