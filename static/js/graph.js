@@ -50,7 +50,7 @@
 
   updateCurrent = function() {
     var h, the_ticks, tick_count, tw;
-    tick_count = 10;
+    tick_count = 9;
     the_ticks = ticks(tick_count);
     h = $('#current-chart').height();
     tw = $('#current-chart').width();

@@ -32,7 +32,7 @@ updateOverview = ->
       .attr("width", 5)
   
 updateCurrent = ->
-    tick_count = 10
+    tick_count = 9
     the_ticks = ticks(tick_count)
     h = $('#current-chart').height()  
     tw = $('#current-chart').width()
