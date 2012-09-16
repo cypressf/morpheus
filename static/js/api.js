@@ -11,9 +11,9 @@
       }
       console.log("Trying to get data");
       if ((typeof startTime !== "undefined" && startTime !== null) && (typeof endTime !== "undefined" && endTime !== null)) {
-        return $.getJSON('/data/?username=' + username + '&' + 'earliestdate=' + earliestDate + '&' + 'latestdate=' + latestDate, callback);
+        return $.getJSON('/getdata/?username=' + username + '&' + 'earliestdate=' + earliestDate + '&' + 'latestdate=' + latestDate, callback);
       } else {
-        return $.getJSON('/data/?username=' + username, callback);
+        return $.getJSON('/getdata/?username=' + username, callback);
       }
     }
   };

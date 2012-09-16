@@ -46,6 +46,8 @@ body, html {
 
 #current-wrapper {
     height: 60%;
+    margin-left: 3em;
+    margin-right: 3em;
 }
 
 #current-chart rect {

@@ -62,21 +62,23 @@
     });
   };
 
-  resizeChart = function(idStr) {
-    var h, l, tw, w;
+  resizeChart = function(chart, idStr, elementCount, spacing) {
+    var h, tw, w;
+    if (spacing == null) {
+      spacing = 1;
+    }
     h = $(idStr).height();
     tw = $(idStr).width();
-    l = mainUser.sleeps.length;
-    w = (tw - 10) / l;
+    w = tw / (elementCount + spacing / 2);
     if (w < 5) {
       w = 5;
     }
-    return chartO.selectAll("rect").transition().duration(0).attr("height", function(d, i) {
+    return chart.selectAll("rect").transition().duration(0).attr("height", function(d, i) {
       return (d.end.getHours() - d.start.getHours()) * h / 25.0;
     }).attr("width", function(d, i) {
       return w;
     }).attr("x", function(d, i) {
-      return (i * (w + 1)) + (tw - (w + 1) * l);
+      return (i * (w + spacing)) + (tw - (w + spacing) * (elementCount + 1));
     });
   };
 
@@ -88,13 +90,14 @@
       mainUser.sleeps.push(newSleep);
     }
     updateOverview();
-    resizeChart('#overview-chart');
-    resizeChart('#current-chart');
-    return updateCurrent();
+    updateCurrent();
+    resizeChart(chartO, '#overview-chart', mainUser.sleeps.length);
+    return resizeChart(chartC, '#current-chart', 7, 10);
   }), 'Gomez');
 
   $(window).resize(function() {
-    return resizeChart('#overview-chart');
+    resizeChart(chartO, '#overview-chart', mainUser.sleeps.length);
+    return resizeChart(chartC, '#current-chart', 7, 10);
   });
 
 }).call(this);

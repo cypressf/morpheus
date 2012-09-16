@@ -50,14 +50,13 @@ updateCurrent = ->
                 return i*62)
     
 
-resizeChart = (idStr) ->
+resizeChart = (chart, idStr, elementCount, spacing=1) ->
     h = $(idStr).height()  
     tw = $(idStr).width()
-    l = mainUser.sleeps.length
-    w = (tw-10)/l
+    w = tw/(elementCount+spacing/2)
     if w < 5
         w = 5
-    chartO.selectAll("rect").transition().duration(0)
+    chart.selectAll("rect").transition().duration(0)
     .attr("height",
             (d, i) ->
                 return (d.end.getHours() - d.start.getHours()) * h/25.0)
@@ -66,7 +65,7 @@ resizeChart = (idStr) ->
                 return w)
     .attr("x",
         (d, i) ->
-            return (i * (w+1)) + (tw-(w+1)*l))
+            return (i * (w+spacing)) + (tw-(w+spacing)*(elementCount+1)))
 
 
 window.morpheus.getDataForUser(
@@ -75,11 +74,12 @@ window.morpheus.getDataForUser(
             newSleep = new Sleep s.start, s.end
             mainUser.sleeps.push(newSleep)
         updateOverview()
-        resizeChart('#overview-chart')
-        resizeChart('#current-chart')      
-        updateCurrent()),
+        updateCurrent()
+        resizeChart(chartO, '#overview-chart', mainUser.sleeps.length)
+        resizeChart(chartC, '#current-chart', 7, 10)),
     'Gomez')
 
 $(window).resize ->
-    resizeChart('#overview-chart')
+    resizeChart(chartO, '#overview-chart', mainUser.sleeps.length)
+    resizeChart(chartC, '#current-chart', 7, 10)
 
