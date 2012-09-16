@@ -83,8 +83,8 @@ updateCurrent = ->
       .attr("y", (d) -> position(d) * h)
       .attr("x", 0)
       .attr("dx", 20)
-      .attr("text-anchor", "middle")
       .text((d) -> formatTime(d))
+      .attr("text-anchor", "middle")
 
 resizeChart = (chart, idStr, elementCount, spacing=1) ->
     h = $(idStr).height() - globalChartCOffset.top
@@ -124,6 +124,21 @@ resizeLines = ->
 position = (d) ->
   ((d.getHours() + d.getMinutes() / 60 + d.getSeconds() / (60*60)) / 24 + 0.25) % 1
 
+window.position = position
+
+dateFromPosFrac = (x,y) ->
+  vert = (y-0.25)%1
+  vertScaled = vert * 24
+  hours = vertScaled
+  minutes = (hours%1)*60
+  seconds = (minutes%1)*60*60
+  d = new Date()
+  d.setHours(hours)
+  d.setMinutes(minutes)
+  d.setSeconds(seconds)
+  return d
+  #return hours
+
 # you want n ticks on the graph: here're the dates you need
 ticks = (n) ->
   ticks = []
@@ -136,11 +151,20 @@ ticks = (n) ->
     second_fraction = minute_fraction % 1
     seconds = second_fraction * 60
     ticks.push(new Date(2012,1,1,hours, minutes, seconds))
-  console.log(ticks)
   return ticks
 
 currentInteractionState = 
   isMakingBar : false
+
+$('#current-chart').mousemove (e) ->
+    h = $('#current-chart').height() - globalChartCOffset.top
+    x = e.pageX - this.offsetLeft
+    y = e.pageY - this.offsetTop + globalChartCOffset.top
+
+    d = dateFromPosFrac(x,y/h)
+    #console.log formatTime(d)
+    #console.log dateFromPosFrac(x,y/h)
+
 
 window.morpheus.getDataForUser(
     ((response) ->
