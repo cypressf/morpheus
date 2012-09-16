@@ -15,9 +15,11 @@ mainUser = new User 'Gomez'
 
 chartO = d3.select("#overview-chart")
 chartC = d3.select("#current-chart")
+globalChartCOffset =
+  top : 50
 
 updateOverview = ->
-  h = $('#overview-chart').height()  
+  h = $('#overview-chart').height()
   chartO.selectAll("rect").data(mainUser.sleeps)
       .enter().append("rect")
       .attr("x",
@@ -30,18 +32,32 @@ updateOverview = ->
           (d, i) ->
               return (position(d.end) - position(d.start)) * h)
       .attr("width", 5)
-  
+
+formatTime = (d) ->
+    hours = d.getHours(d)
+    mins = d.getMinutes(d)+''
+    amPm = ' am'
+    if hours > 11
+        hours -= 12
+        amPm = ' pm'
+    if hours == 0
+        amPm = ' am'
+        hours = 12
+    if mins.length == 1
+        mins = '0'+mins
+    return hours + ':' + mins + amPm
+
 updateCurrent = ->
     tick_count = 9
     the_ticks = ticks(tick_count)
-    h = $('#current-chart').height()  
+    h = $('#current-chart').height() - globalChartCOffset.top  
     tw = $('#current-chart').width()
     chartC.selectAll("rect")
         .data(mainUser.sleeps[-7..])
         .enter().append("rect")
         .attr("y",
             (d, i) ->
-                return position(d.start) * h)
+                return position(d.start) * h + globalChartCOffset.top)
         .attr("height",
             (d, i) ->
                 return (position(d.end) - position(d.start)) * h)
@@ -66,13 +82,12 @@ updateCurrent = ->
       .attr("class", "rule")
       .attr("y", (d) -> position(d) * h)
       .attr("x", 0)
-      .attr("dx", 8)
+      .attr("dx", 20)
       .attr("text-anchor", "middle")
-      .text((d) -> d.getHours())
-    
+      .text((d) -> formatTime(d))
 
 resizeChart = (chart, idStr, elementCount, spacing=1) ->
-    h = $(idStr).height()
+    h = $(idStr).height() - globalChartCOffset.top
     tw = $(idStr).width()
     w = tw/(elementCount+spacing/2)
     if w < 5
@@ -87,15 +102,23 @@ resizeChart = (chart, idStr, elementCount, spacing=1) ->
     .attr("x",
         (d, i) ->
             return (i * (w+spacing)) + (tw-(w+spacing)*(elementCount+1)))
+    .attr("y",
+        (d, i) ->
+            return position(d.start) * h + globalChartCOffset.top)
 
 resizeLines = ->
-  h = $('#current-chart').height()  
+  h = $('#current-chart').height() - globalChartCOffset.top 
   tw = $('#current-chart').width()
   chartC.selectAll("line").transition(0).duration(0)
-    .attr("y1", (d) -> position(d) * h)
-    .attr("y2", (d) -> position(d) * h)
+    .attr("y1", (d) -> position(d) * h + globalChartCOffset.top)
+    .attr("y2", (d) -> position(d) * h + globalChartCOffset.top)
     .attr("x1", 0)
     .attr("x2", tw)
+
+  chartC.selectAll(".rule").transition(0).duration(0)
+    .attr("y", (d) -> position(d) * h + globalChartCOffset.top)
+    .attr("x", 0)
+    .attr("dx", 35)
 
 # maps a time (from a date object) to a ratio from 0 to 1
 position = (d) ->
@@ -115,6 +138,9 @@ ticks = (n) ->
     ticks.push(new Date(2012,1,1,hours, minutes, seconds))
   console.log(ticks)
   return ticks
+
+currentInteractionState = 
+  isMakingBar : false
 
 window.morpheus.getDataForUser(
     ((response) ->
