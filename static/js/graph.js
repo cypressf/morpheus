@@ -73,7 +73,7 @@
 
   updateCurrent = function() {
     var h, the_ticks, tick_count, tw;
-    tick_count = 9;
+    tick_count = 8;
     the_ticks = ticks(tick_count);
     h = $('#current-chart').height() - globalChartCOffset.top;
     tw = $('#current-chart').width();

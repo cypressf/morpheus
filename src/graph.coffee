@@ -48,7 +48,7 @@ formatTime = (d) ->
     return hours + ':' + mins + amPm
 
 updateCurrent = ->
-    tick_count = 9
+    tick_count = 8
     the_ticks = ticks(tick_count)
     h = $('#current-chart').height() - globalChartCOffset.top  
     tw = $('#current-chart').width()
