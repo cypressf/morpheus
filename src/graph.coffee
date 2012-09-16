@@ -17,8 +17,8 @@ chartO = d3.select("#overview-chart")
 chartC = d3.select("#current-chart")
 
 updateOverview = ->
-  chartO.selectAll("rect")
-      .data(mainUser.sleeps)
+  h = $('#overview-chart').height()  
+  chartO.selectAll("rect").data(mainUser.sleeps)
       .enter().append("rect")
       .attr("x",
           (d, i) ->
@@ -28,8 +28,45 @@ updateOverview = ->
               return d.start.getHours()*10)
       .attr("height",
               (d, i) ->
-                  return (d.end.getHours() - d.start.getHours()) * 10)
+                  return (d.end.getHours() - d.start.getHours()) * h/25.0)
       .attr("width", 5)
+  
+updateCurrent = ->
+    h = $('#current-chart').height()                     
+    chartC.selectAll("rect")
+        .data(mainUser.sleeps[-7..])
+        .enter().append("rect")
+        .attr("y",
+            (d, i) ->
+                return d.start.getHours())
+        .attr("height",
+                (d, i) ->
+                    return (d.end.getHours() - d.start.getHours()) * h/25.0)
+        .attr("width",
+                (d, i) ->
+                    return 60)
+        .attr("x",
+            (d, i) ->
+                return i*62)
+    
+
+resizeChart = (idStr) ->
+    h = $(idStr).height()  
+    tw = $(idStr).width()
+    l = mainUser.sleeps.length
+    w = (tw-10)/l
+    if w < 5
+        w = 5
+    chartO.selectAll("rect").transition().duration(0)
+    .attr("height",
+            (d, i) ->
+                return (d.end.getHours() - d.start.getHours()) * h/25.0)
+    .attr("width",
+            (d, i) ->
+                return w)
+    .attr("x",
+        (d, i) ->
+            return (i * (w+1)) + (tw-(w+1)*l))
 
 
 window.morpheus.getDataForUser(
@@ -37,35 +74,12 @@ window.morpheus.getDataForUser(
         for s in response
             newSleep = new Sleep s.start, s.end
             mainUser.sleeps.push(newSleep)
-            updateOverview()
-        console.log response),
+        updateOverview()
+        resizeChart('#overview-chart')
+        resizeChart('#current-chart')      
+        updateCurrent()),
     'Gomez')
 
+$(window).resize ->
+    resizeChart('#overview-chart')
 
-
-
-'''
-for i in [1..200]
-    sTime = randint 0, 5
-    eTime = sTime + randint 3, 9
-    s = new Sleep mainUser, sTime, eTime
-    mainUser.sleeps.push s
-'''
-
-
-
-'''
-chartC.selectAll("rect")
-    .data(mainUser.sleeps[-7..])
-    .enter().append("rect")
-    .attr("x",
-        (d, i) ->
-            return i * 20)
-    .attr("y",
-        (d, i) ->
-            return d.start*10)
-    .attr("height",
-            (d, i) ->
-                return (d.end.getHour() - d.start.getHour()) * 10)
-    .attr("width", 20)
-'''
