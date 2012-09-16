@@ -30,7 +30,7 @@ body, html {
 }
 
 #overview-wrapper {
-    height: 30%;
+    height: 15%;
     padding: 0.5em;
 }
 
@@ -48,6 +48,7 @@ body, html {
     height: 60%;
     margin-left: 3em;
     margin-right: 3em;
+    margin-bottom: 1em;
 }
 
 #current-chart rect {

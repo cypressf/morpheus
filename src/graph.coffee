@@ -15,9 +15,11 @@ mainUser = new User 'Gomez'
 
 chartO = d3.select("#overview-chart")
 chartC = d3.select("#current-chart")
+globalChartCOffset =
+  top : 50
 
 updateOverview = ->
-  h = $('#overview-chart').height()  
+  h = $('#overview-chart').height()
   chartO.selectAll("rect").data(mainUser.sleeps)
       .enter().append("rect")
       .attr("x",
@@ -30,18 +32,32 @@ updateOverview = ->
           (d, i) ->
               return (position(d.end) - position(d.start)) * h)
       .attr("width", 5)
-  
+
+formatTime = (d) ->
+    hours = d.getHours(d)
+    mins = d.getMinutes(d)+''
+    amPm = ' am'
+    if hours > 11
+        hours -= 12
+        amPm = ' pm'
+    if hours == 0
+        amPm = ' am'
+        hours = 12
+    if mins.length == 1
+        mins = '0'+mins
+    return hours + ':' + mins + amPm
+
 updateCurrent = ->
-    tick_count = 10
+    tick_count = 8
     the_ticks = ticks(tick_count)
-    h = $('#current-chart').height()  
+    h = $('#current-chart').height() - globalChartCOffset.top  
     tw = $('#current-chart').width()
     chartC.selectAll("rect")
         .data(mainUser.sleeps[-7..])
         .enter().append("rect")
         .attr("y",
             (d, i) ->
-                return position(d.start) * h)
+                return position(d.start) * h + globalChartCOffset.top)
         .attr("height",
             (d, i) ->
                 return (position(d.end) - position(d.start)) * h)
@@ -66,13 +82,12 @@ updateCurrent = ->
       .attr("class", "rule")
       .attr("y", (d) -> position(d) * h)
       .attr("x", 0)
-      .attr("dx", 8)
+      .attr("dx", 20)
+      .text((d) -> formatTime(d))
       .attr("text-anchor", "middle")
-      .text((d) -> d.getHours())
-    
 
 resizeChart = (chart, idStr, elementCount, spacing=1) ->
-    h = $(idStr).height()
+    h = $(idStr).height() - globalChartCOffset.top
     tw = $(idStr).width()
     w = tw/(elementCount+spacing/2)
     if w < 5
@@ -86,42 +101,69 @@ resizeChart = (chart, idStr, elementCount, spacing=1) ->
                 return w)
     .attr("x",
         (d, i) ->
-            return (i * (w+spacing)) + (tw-(w+spacing)*(elementCount+1)))
+            xPosition(d, i, spacing, w, tw, elementCount))
     .attr("y",
         (d, i) ->
-            return position(d.start) * h)
+            return position(d.start) * h + globalChartCOffset.top)
+
+
+xPosition = (d, i, spacing, w, tw, elementCount) ->
+    return i * (w+spacing) + tw-(w+spacing)*(elementCount+1)
 
 resizeLines = ->
-  h = $('#current-chart').height()  
+  h = $('#current-chart').height() - globalChartCOffset.top 
   tw = $('#current-chart').width()
   chartC.selectAll("line").transition(0).duration(0)
-    .attr("y1", (d) -> position(d) * h)
-    .attr("y2", (d) -> position(d) * h)
+    .attr("y1", (d) -> position(d) * h + globalChartCOffset.top)
+    .attr("y2", (d) -> position(d) * h + globalChartCOffset.top)
     .attr("x1", 0)
     .attr("x2", tw)
+
+  chartC.selectAll(".rule").transition(0).duration(0)
+    .attr("y", (d) -> position(d) * h + globalChartCOffset.top)
+    .attr("x", 0)
+    .attr("dx", 35)
 
 # maps a time (from a date object) to a ratio from 0 to 1
 position = (d) ->
   ((d.getHours() + d.getMinutes() / 60 + d.getSeconds() / (60*60)) / 24 + 0.25) % 1
 
+window.position = position
+
+
 # you want n ticks on the graph: here're the dates you need
 ticks = (n) ->
   ticks = []
-  for tick in [0..1] by 1 / n
-    [hours, minutes, seconds] = gettime tick
+  count = [0..n]
+  for i in count
+    tick = 1/n * i
+    [hours, minutes, seconds] = dateFromPosFrac 1, tick
     ticks.push(new Date(2012,1,1,hours, minutes, seconds))
-  console.log(ticks)
   return ticks
 
-gettime = (n) ->
-  n = (n - 0.25) % 1
-  n += 1 if n < 0
-  hours = n * 24
+dateFromPosFrac = (x, y) ->
+  y = (y - 0.25) % 1
+  y += 1 if y < 0
+  hours = y * 24
   minute_fraction = hours % 1
   minutes = minute_fraction * 60
   second_fraction = minute_fraction % 1
   seconds = second_fraction * 60
   return [hours, minutes, seconds]
+
+currentInteractionState = 
+  isMakingBar : false
+
+$('#current-chart').mousemove (e) ->
+    h = $('#current-chart').height() - globalChartCOffset.top
+    x = e.pageX - this.offsetLeft
+    y = e.pageY - this.offsetTop - globalChartCOffset.top
+
+    [hours, minutes, seconds] = dateFromPosFrac(1, y/h)
+    d = new Date(2012,1,1,hours, minutes, seconds)
+    console.log formatTime(d)
+    #console.log dateFromPosFrac(x,y/h)
+
 
 window.morpheus.getDataForUser(
     ((response) ->
@@ -154,7 +196,7 @@ getCookie = (name) ->
                 break
     return cookieValue
 
-csrfSafeMethod(method) ->
+csrfSafeMethod = (method) ->
     # these HTTP methods do not require CSRF protection
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method))
 
@@ -165,25 +207,25 @@ $.ajaxSetup(
           xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'))
 )
 
-$('#current-chart').mousedown (e) ->
-    $('#current-chart').mousemove (e) ->
+# $('#current-chart').mousedown (e) ->
+#     $('#current-chart').mousemove (e) ->
 
-    $('#current-chart').mouseup (e) ->
+#     $('#current-chart').mouseup (e) ->
       
 
-    x = e.pageX - this.offsetLeft
-    y = e.pageY - this.offsetTop
-    h = $("#current-chart").height()
-    w = $("#current-chart").width()
+#     x = e.pageX - this.offsetLeft
+#     y = e.pageY - this.offsetTop
+#     h = $("#current-chart").height()
+#     w = $("#current-chart").width()
 
-    [hours, minutes, seconds] = gettime(y / h)
+#     [hours, minutes, seconds] = dateFromPosFrac(1, y / h)
 
-    start = new Date(2012,9,16,hours, minutes, seconds).valueOf()
-    end = new Date().valueOf()
-    data = 
-      "username": '{{ user.username }}'
-      "start": start
-      "end": end
-    $.post("/postdata/", data)
-    return false
+#     start = new Date(2012,9,16,hours, minutes, seconds).valueOf()
+#     end = new Date().valueOf()
+#     data = 
+#       "username": '{{ user.username }}'
+#       "start": start
+#       "end": end
+#     $.post("/postdata/", data)
+#     return false
 
