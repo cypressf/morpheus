@@ -13,15 +13,6 @@ class Sleep
 
 class TempBar
     constructor : (@parent, @x, @y, @width, @height) ->
-         
-        $(@parent).append("<rect></rect>")
-          .attr({
-              x: @x
-              y: @y
-              width: @width
-              height: @height
-              fill: 'red'
-          })
 
 mainUser = new User 'Gomez'
 
@@ -40,13 +31,15 @@ class InteractionState
         Math.ceil((@earliestDate-@latestDate)/1000/60/60/24)
     daysInOverviewRange : () ->
         Math.ceil((@earliestOverviewDate-@latestOverviewDate)/1000/60/60/24)
+    currentBar: []
 
 currentInteractionState = new InteractionState()
 
 updateOverview = ->
   h = $('#overview-chart').height()
-  chartO.selectAll("rect").data(mainUser.sleeps)
+  chartO.selectAll(".bar").data(mainUser.sleeps)
       .enter().append("rect")
+      .attr("class", "bar")
       .attr("x",
           (d, i) ->
               return i * 6)
@@ -77,9 +70,10 @@ updateCurrent = ->
     the_ticks = ticks(tick_count)
     h = $('#current-chart').height() - globalChartCOffset.top  
     tw = $('#current-chart').width()
-    chartC.selectAll("rect")
+    chartC.selectAll(".bar")
         .data(mainUser.sleeps[-currentInteractionState.daysInRange()..])
         .enter().append("rect")
+        .attr("class", "bar")
         .attr("y",
             (d, i) ->
                 return position(d.start) * h + globalChartCOffset.top)
@@ -111,6 +105,16 @@ updateCurrent = ->
       .text((d) -> formatTime(d))
       .attr("text-anchor", "middle")
 
+updateUserBar = ->
+    chartC.selectAll(".userbar")
+        .data(currentInteractionState.currentBar)
+        .enter().append("rect")
+        .attr("class", "userbar")
+        .attr("x", (d) -> d.x)
+        .attr("y", (d) -> d.y)
+        .attr("width", (d) -> d.width)
+        .attr("height", (d) -> d.height)
+
 resizeChart = (chart, idStr, dmin, dmax, spacing=1) ->
     state = new InteractionState()
     state.setRange(dmin, dmax)
@@ -124,7 +128,7 @@ resizeChart = (chart, idStr, dmin, dmax, spacing=1) ->
     w = tw/(elementCount+spacing/2)
     if w < 5
         w = 5
-    chart.selectAll("rect").transition().duration(0)
+    chart.selectAll(".bar").transition().duration(0)
     .attr("height",
             (d, i) ->
                 return (position(d.end) - position(d.start)) * h)
@@ -208,7 +212,9 @@ dateFromX = (x, dmin, dmax, ymax) ->
   return d
 
 
-#temp = new TempBar($('#current-chart'), 0, 0, 200, 200)
+temp = new TempBar($('#current-chart'), 0, 0, 200, 200)
+currentInteractionState.currentBar.push(temp)
+updateUserBar()
 $('#current-chart').mousemove (e) ->
     h = $('#current-chart').height() - globalChartCOffset.top
     x = e.pageX - this.offsetLeft
