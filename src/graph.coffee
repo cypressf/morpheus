@@ -13,7 +13,7 @@ class Sleep
 
 class TempBar
     constructor : (@parent, @x, @y, @width, @height) ->
-        
+         
         $(@parent).append("<rect></rect>")
           .attr({
               x: @x
