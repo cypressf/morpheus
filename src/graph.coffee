@@ -112,9 +112,12 @@ updateCurrent = ->
       .attr("text-anchor", "middle")
 
 resizeChart = (chart, idStr, dmin, dmax, spacing=1) ->
-    i = new InteractionState()
-    i.setRange(dmin, dmax)
-    elementCount = i.daysInRange()
+    state = new InteractionState()
+    state.setRange(dmin, dmax)
+    console.log("test")
+    console.log("earliestdate " + state.earliestDate)
+    console.log("latestdate " + state.latestDate)
+    elementCount = state.daysInRange()
     h = $(idStr).height() - globalChartCOffset.top
     tw = $(idStr).width()
     w = tw/(elementCount+spacing/2)
@@ -129,21 +132,16 @@ resizeChart = (chart, idStr, dmin, dmax, spacing=1) ->
                 return w)
     .attr("x",
         (d, i) ->
-            xPosition(d.start, 0, $(idStr).width(), i.earliestDate, i.latestDate))
+            xPosition(d.start, 0, $(idStr).width(), state.earliestDate, state.latestDate))
     .attr("y",
         (d, i) ->
             return position(d.start) * h + globalChartCOffset.top)
-
-
-xPosition = (d, i, spacing, w, tw, elementCount) ->
-    return i * (w+spacing) + tw-(w+spacing)*(elementCount+1)
 
 xPosition = (d, pmin, pmax, dmin, dmax) ->
   # convert d variables into a number representing
   # a number of days
   d = d.valueOf() / (1000 * 60 * 60 * 24)
   dmin = dmin.valueOf() / (1000 * 60 * 60 * 24)
-  console.log(dmin)
   dmax = dmax.valueOf() / (1000 * 60 * 60 * 24)
 
   console.log(d - dmin) / (dmax - dmin)
