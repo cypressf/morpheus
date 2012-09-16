@@ -87,6 +87,9 @@ resizeChart = (chart, idStr, elementCount, spacing=1) ->
     .attr("x",
         (d, i) ->
             return (i * (w+spacing)) + (tw-(w+spacing)*(elementCount+1)))
+    .attr("y",
+        (d, i) ->
+            return position(d.start) * h)
 
 resizeLines = ->
   h = $('#current-chart').height()  
@@ -105,16 +108,20 @@ position = (d) ->
 ticks = (n) ->
   ticks = []
   for tick in [0..1] by 1 / n
-    tick = (tick - 0.25) % 1
-    tick += 1 if tick < 0
-    hours = tick * 24
-    minute_fraction = hours % 1
-    minutes = minute_fraction * 60
-    second_fraction = minute_fraction % 1
-    seconds = second_fraction * 60
+    [hours, minutes, seconds] = gettime tick
     ticks.push(new Date(2012,1,1,hours, minutes, seconds))
   console.log(ticks)
   return ticks
+
+gettime = (n) ->
+  n = (n - 0.25) % 1
+  n += 1 if n < 0
+  hours = n * 24
+  minute_fraction = hours % 1
+  minutes = minute_fraction * 60
+  second_fraction = minute_fraction % 1
+  seconds = second_fraction * 60
+  return [hours, minutes, seconds]
 
 window.morpheus.getDataForUser(
     ((response) ->
@@ -132,4 +139,51 @@ $(window).resize ->
     resizeChart(chartO, '#overview-chart', mainUser.sleeps.length)
     resizeChart(chartC, '#current-chart', 7, 10)
     resizeLines()
+
+
+# using jQuery
+getCookie = (name) ->
+    cookieValue = null
+    if (document.cookie && document.cookie != '')
+        cookies = document.cookie.split(';')
+        for cookie in cookies 
+            cookie = jQuery.trim(cookie)
+            # Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) 
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+                break
+    return cookieValue
+
+csrfSafeMethod(method) ->
+    # these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method))
+
+$.ajaxSetup(
+    crossDomain: false # obviates need for sameOrigin test
+    beforeSend: (xhr, settings) ->
+      if (!csrfSafeMethod(settings.type)) 
+          xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'))
+)
+
+$('#current-chart').mousedown (e) ->
+    $('#current-chart').mousemove (e) ->
+
+    $('#current-chart').mouseup (e) ->
+      
+
+    x = e.pageX - this.offsetLeft
+    y = e.pageY - this.offsetTop
+    h = $("#current-chart").height()
+    w = $("#current-chart").width()
+
+    [hours, minutes, seconds] = gettime(y / h)
+
+    start = new Date(2012,9,16,hours, minutes, seconds).valueOf()
+    end = new Date().valueOf()
+    data = 
+      "username": '{{ user.username }}'
+      "start": start
+      "end": end
+    $.post("/postdata/", data)
+    return false
 
