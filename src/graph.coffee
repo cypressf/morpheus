@@ -27,7 +27,7 @@ class InteractionState
     setRange : (@earliestDate, @latestDate) ->
     setOverviewRange : (@earliestOverviewDate, @latestOverviewDate) ->
     daysInRange : () ->
-        Math.ceil((@earliestDate-@latestDate)/1000/60/60/24)
+        Math.ceil((@latestDate-@earliestDate)/1000/60/60/24)
     daysInOverviewRange : () ->
         Math.ceil((@earliestOverviewDate-@latestOverviewDate)/1000/60/60/24)
     currentBar: []
