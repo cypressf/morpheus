@@ -110,7 +110,7 @@ resizeChart = (chart, idStr, elementCount, spacing=1) ->
                 return w)
     .attr("x",
         (d, i) ->
-            xPosition(d, i, spacing, w, tw, elementCount))
+            xPosition(d, 0, $(idStr).width(), currentInteractionState.earliestDate, currentInteractionState.latestDate))
     .attr("y",
         (d, i) ->
             return position(d.start) * h + globalChartCOffset.top)

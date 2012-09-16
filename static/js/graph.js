@@ -135,7 +135,7 @@
     }).attr("width", function(d, i) {
       return w;
     }).attr("x", function(d, i) {
-      return xPosition(d, i, spacing, w, tw, elementCount);
+      return xPosition(d, 0, $(idStr).width(), currentInteractionState.earliestDate, currentInteractionState.latestDate);
     }).attr("y", function(d, i) {
       return position(d.start) * h + globalChartCOffset.top;
     });
