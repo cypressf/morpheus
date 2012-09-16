@@ -83,11 +83,16 @@ updateCurrent = ->
 
     resizeChart(chartC, '#current-chart', currentInteractionState.earliestDate, currentInteractionState.latestDate, 10)
 
-updateUserBar = ->
+createUserBar = ->
     chartC.selectAll(".userbar")
         .data(currentInteractionState.currentBar)
         .enter().append("rect")
         .attr("class", "userbar")
+
+    refreshUserBar()
+
+refreshUserBar = ->
+    chartC.selectAll(".userbar").transition().duration(0)
         .attr("x", (d) -> d.x)
         .attr("y", (d) -> d.y)
         .attr("width", (d) -> d.width)
@@ -181,10 +186,6 @@ dateFromX = (x, dmin, dmax, xmax) ->
   #console.log(d)
   return d
 
-
-temp = new TempBar($('#current-chart'), 0, 0, 200, 200)
-currentInteractionState.currentBar.push(temp)
-updateUserBar()
 $('#current-chart').mousemove (e) ->
     h = $('#current-chart').height() - globalChartCOffset.top
     x = e.pageX - this.offsetLeft
@@ -197,6 +198,10 @@ $('#current-chart').mousemove (e) ->
     # console.log formatTime(d)
     #console.log dateFromPosFrac(x,y/h)
 
+$('#current-chart').click (e) ->
+    temp = new TempBar($('#current-chart'), 0, 0, 200, 200)
+    currentInteractionState.currentBar.push(temp)
+    createUserBar()
 
 window.morpheus.getDataForUser(
     ((response) ->
