@@ -18,6 +18,15 @@ chartC = d3.select("#current-chart")
 globalChartCOffset =
   top : 50
 
+class InteractionState
+    constructor : () ->
+        @isMakingBar = false
+    setRange : (@earliestDate, @latestDate) ->
+    daysInRange : () ->
+        Math.ceil((@latestDate-@earliestDate)/1000/60/60/24)
+
+currentInteractionState = new InteractionState()
+
 updateOverview = ->
   h = $('#overview-chart').height()
   chartO.selectAll("rect").data(mainUser.sleeps)
@@ -53,7 +62,7 @@ updateCurrent = ->
     h = $('#current-chart').height() - globalChartCOffset.top  
     tw = $('#current-chart').width()
     chartC.selectAll("rect")
-        .data(mainUser.sleeps[-7..])
+        .data(mainUser.sleeps[-currentInteractionState.daysInRange()..])
         .enter().append("rect")
         .attr("y",
             (d, i) ->
@@ -192,16 +201,18 @@ window.morpheus.getDataForUser(
         for s in response
             newSleep = new Sleep s.start, s.end
             mainUser.sleeps.push(newSleep)
+        console.log mainUser.sleeps[-1..][0]
+        currentInteractionState.setRange(mainUser.sleeps[-1..][0].end, mainUser.sleeps[-8..][0].start)
         updateOverview()
         updateCurrent()
         resizeChart(chartO, '#overview-chart', mainUser.sleeps.length)
-        resizeChart(chartC, '#current-chart', 7, 10)
+        resizeChart(chartC, '#current-chart', currentInteractionState.daysInRange(), 10)
         resizeLines()),
     'Gomez')
 
 $(window).resize ->
     resizeChart(chartO, '#overview-chart', mainUser.sleeps.length)
-    resizeChart(chartC, '#current-chart', 7, 10)
+    resizeChart(chartC, '#current-chart', currentInteractionState.daysInRange(), 10)
     resizeLines()
 
 
