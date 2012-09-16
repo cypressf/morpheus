@@ -23,8 +23,7 @@ globalChartCOffset =
 
 class InteractionState
     constructor : () ->
-        @isMakingBar = false
-        @isDragging = 0
+        @dragState = 0
     setRange : (@earliestDate, @latestDate) ->
     setOverviewRange : (@earliestOverviewDate, @latestOverviewDate) ->
     daysInRange : () ->
@@ -197,11 +196,24 @@ $('#current-chart').mousemove (e) ->
     console.log dateFromX(x, currentInteractionState.earliestDate, currentInteractionState.latestDate, $('#current-chart').width())
     # console.log formatTime(d)
     #console.log dateFromPosFrac(x,y/h)
+    
+    console.log e
+    x = e.pageX - this.offsetLeft
+    y = e.pageY - this.offsetTop
+    currentInteractionState.currentBar[0].width = x - currentInteractionState.currentBar[0].x
+    currentInteractionState.currentBar[0].height = y - currentInteractionState.currentBar[0].y
+    refreshUserBar()
 
-$('#current-chart').click (e) ->
-    temp = new TempBar($('#current-chart'), 0, 0, 200, 200)
+$('#current-chart').mousedown (e) ->
+    currentInteractionState.dragState = 1
+    x = e.pageX - this.offsetLeft
+    y = e.pageY - this.offsetTop
+    temp = new TempBar($('#current-chart'), x, y, 200, 200)
     currentInteractionState.currentBar.push(temp)
     createUserBar()
+
+$('#current-chart').mouseup (e) ->
+   currentInteractionState.dragState = 0 
 
 window.morpheus.getDataForUser(
     ((response) ->
