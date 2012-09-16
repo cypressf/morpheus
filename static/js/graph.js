@@ -157,9 +157,6 @@
     }
     state = new InteractionState();
     state.setRange(dmin, dmax);
-    console.log("test");
-    console.log("earliestdate " + state.earliestDate);
-    console.log("latestdate " + state.latestDate);
     elementCount = state.daysInRange();
     h = $(idStr).height() - globalChartCOffset.top;
     tw = $(idStr).width();
@@ -182,7 +179,6 @@
     d = d.valueOf() / (1000 * 60 * 60 * 24);
     dmin = dmin.valueOf() / (1000 * 60 * 60 * 24);
     dmax = dmax.valueOf() / (1000 * 60 * 60 * 24);
-    console.log(d - dmin) / (dmax - dmin);
     return Math.floor(d - dmin) / (dmax - dmin) * pmax;
   };
 
@@ -242,7 +238,6 @@
     dmin = dmin.valueOf() / (1000 * 60 * 60 * 24);
     dmax = dmax.valueOf() / (1000 * 60 * 60 * 24);
     d = new Date(Math.floor(dmin + y * (dmax - dmin) / ymax));
-    console.log(d);
     return d;
   };
 

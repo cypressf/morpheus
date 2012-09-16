@@ -114,9 +114,6 @@ updateCurrent = ->
 resizeChart = (chart, idStr, dmin, dmax, spacing=1) ->
     state = new InteractionState()
     state.setRange(dmin, dmax)
-    console.log("test")
-    console.log("earliestdate " + state.earliestDate)
-    console.log("latestdate " + state.latestDate)
     elementCount = state.daysInRange()
     h = $(idStr).height() - globalChartCOffset.top
     tw = $(idStr).width()
@@ -143,9 +140,6 @@ xPosition = (d, pmin, pmax, dmin, dmax) ->
   d = d.valueOf() / (1000 * 60 * 60 * 24)
   dmin = dmin.valueOf() / (1000 * 60 * 60 * 24)
   dmax = dmax.valueOf() / (1000 * 60 * 60 * 24)
-
-  console.log(d - dmin) / (dmax - dmin)
-
   Math.floor(d - dmin) / (dmax - dmin) * pmax
 
 
@@ -200,7 +194,6 @@ dateFromX = (x, dmin, dmax, ymax) ->
   # function that creates a date based on the y position
   # note: doesn't create the correct time
   d = new Date(Math.floor(dmin + y * (dmax - dmin) / ymax ))
-  console.log(d)
   return d
 
 
