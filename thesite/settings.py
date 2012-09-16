@@ -155,9 +155,9 @@ SOCIAL_AUTH_COMPLETE_URL_NAME     = 'socialauth_complete'
 #GITHUB_APP_ID = os.environ['GITHUB_APP_ID']
 #GITHUB_API_SECRET = os.environ['GITHUB_API_SECRET']
 
-LOGIN_URL          = '/login-form/'
+LOGIN_URL          = '/'
 LOGIN_REDIRECT_URL = '/'
-LOGIN_ERROR_URL    = '/login-error/'
+LOGIN_ERROR_URL    = '/'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

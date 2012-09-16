@@ -38,7 +38,7 @@ def logout(request):
     auth_logout(request)
     return HttpResponseRedirect('/')
 
-def data(request):
+def getdata(request):
     """
     Given a GET request with "earliestdate", "latestdate", and "username",
     return a JSON string in the format
@@ -66,11 +66,28 @@ def data(request):
 
     return HttpResponse(sleeps_json, mimetype="application/json")
 
-def post_data(request):
+def postdata(request):
     """
     Given a POST request, with the headers "username", "start", and "end", 
     put the data in the database and return a confirmation when complete.
     """
-    pass
+    if request.method == 'POST':
+        if 'username' in request.POST and 'start' in request.POST and 'end' in request.POST:
+            print request.POST['username'], request.POST['start'], request.POST['end']
+            u = User.objects.filter(username__exact = request.POST["username"])
+            if u:
+                start = datetime.fromtimestamp(int(request.POST['start']) / 1000.0)
+                end = datetime.fromtimestamp(int(request.POST['end']) / 1000.0)
+                Sleep.objects.create(user = u[0], start = start, end = end)
+        return redirect('graph')
+    else: 
+        return render_to_response('graph.html', RequestContext(request))
 
+def form(request):
+    if request.method == 'POST':
+        if "username" in request.POST:
+            print request.POST['username']
+        return redirect('graph')
+    else:
+        return render_to_response('form.html', RequestContext(request))
 
