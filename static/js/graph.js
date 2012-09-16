@@ -79,11 +79,11 @@
     };
 
     InteractionState.prototype.daysInRange = function() {
-      return Math.ceil((this.latestDate - this.earliestDate) / 1000 / 60 / 60 / 24);
+      return Math.ceil((this.earliestDate - this.latestDate) / 1000 / 60 / 60 / 24);
     };
 
     InteractionState.prototype.daysInOverviewRange = function() {
-      return Math.ceil((this.latestOverviewDate - this.earliestOverviewDate) / 1000 / 60 / 60 / 24);
+      return Math.ceil((this.earliestOverviewDate - this.latestOverviewDate) / 1000 / 60 / 60 / 24);
     };
 
     return InteractionState;
@@ -158,6 +158,7 @@
     state = new InteractionState();
     state.setRange(dmin, dmax);
     elementCount = state.daysInRange();
+    console.log(elementCount);
     h = $(idStr).height() - globalChartCOffset.top;
     tw = $(idStr).width();
     w = tw / (elementCount + spacing / 2);
@@ -233,11 +234,11 @@
     return [hours, minutes, seconds];
   };
 
-  dateFromX = function(x, dmin, dmax, ymax) {
+  dateFromX = function(x, dmin, dmax, xmax) {
     var d;
     dmin = dmin.valueOf() / (1000 * 60 * 60 * 24);
     dmax = dmax.valueOf() / (1000 * 60 * 60 * 24);
-    d = new Date(Math.floor(dmin + y * (dmax - dmin) / ymax));
+    d = new Date(Math.floor(dmin + x * (dmax - dmin) / xmax) * (1000 * 60 * 60 * 24));
     return d;
   };
 
@@ -248,7 +249,7 @@
     y = e.pageY - this.offsetTop - globalChartCOffset.top;
     _ref = timeFromY(y / h), hours = _ref[0], minutes = _ref[1], seconds = _ref[2];
     d = new Date(2012, 1, 1, hours, minutes, seconds);
-    return console.log(formatTime(d));
+    return console.log(dateFromX(x, currentInteractionState.earliestDate, currentInteractionState.latestDate, $('#current-chart').width()));
   });
 
   window.morpheus.getDataForUser((function(response) {
@@ -258,7 +259,6 @@
       newSleep = new Sleep(s.start, s.end);
       mainUser.sleeps.push(newSleep);
     }
-    console.log(mainUser.sleeps.slice(-1)[0]);
     currentInteractionState.setRange(mainUser.sleeps.slice(-8)[0].start, mainUser.sleeps.slice(-1)[0].end);
     currentInteractionState.setOverviewRange(mainUser.sleeps[0].start, mainUser.sleeps.slice(-1)[0].end);
     updateOverview();
