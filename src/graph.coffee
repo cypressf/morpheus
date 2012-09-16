@@ -58,10 +58,7 @@ formatTime = (d) ->
     return hours + ':' + mins + amPm
 
 updateOverview = ->
-  h = $('#overview-chart').height()
-  chartO.selectAll("rect").data(mainUser.sleeps)
-      .enter().append("rect")
-  
+  chartO.selectAll("rect").data(mainUser.sleeps).enter().append("rect").attr("class", "bar")
   resizeChart(chartO, '#overview-chart', currentInteractionState.earliestOverviewDate, currentInteractionState.latestOverviewDate)
 
 updateCurrent = ->
@@ -69,9 +66,9 @@ updateCurrent = ->
     the_ticks = ticks(tick_count)
     h = $('#current-chart').height() - globalChartCOffset.top  
     tw = $('#current-chart').width()
-    chartC.selectAll("rect")
+    chartC.selectAll(".bar")
         .data(mainUser.sleeps[-currentInteractionState.daysInRange()..])
-        .enter().append("rect")
+        .enter().append("rect").attr("class", "bar")
 
     chartC.selectAll("line")
       .data(the_ticks)

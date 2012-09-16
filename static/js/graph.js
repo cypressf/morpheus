@@ -112,9 +112,7 @@
   };
 
   updateOverview = function() {
-    var h;
-    h = $('#overview-chart').height();
-    chartO.selectAll("rect").data(mainUser.sleeps).enter().append("rect");
+    chartO.selectAll("rect").data(mainUser.sleeps).enter().append("rect").attr("class", "bar");
     return resizeChart(chartO, '#overview-chart', currentInteractionState.earliestOverviewDate, currentInteractionState.latestOverviewDate);
   };
 
@@ -124,7 +122,7 @@
     the_ticks = ticks(tick_count);
     h = $('#current-chart').height() - globalChartCOffset.top;
     tw = $('#current-chart').width();
-    chartC.selectAll("rect").data(mainUser.sleeps.slice(-currentInteractionState.daysInRange())).enter().append("rect");
+    chartC.selectAll(".bar").data(mainUser.sleeps.slice(-currentInteractionState.daysInRange())).enter().append("rect").attr("class", "bar");
     chartC.selectAll("line").data(the_ticks).enter().append("line").attr("y1", function(d) {
       return position(d) * h;
     }).attr("y2", function(d) {
