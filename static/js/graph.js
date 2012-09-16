@@ -182,6 +182,7 @@
   xPosition = function(d, pmin, pmax, dmin, dmax) {
     d = d.valueOf() / (1000 * 60 * 60 * 24);
     dmin = dmin.valueOf() / (1000 * 60 * 60 * 24);
+    console.log(dmin);
     dmax = dmax.valueOf() / (1000 * 60 * 60 * 24);
     console.log(d - dmin) / (dmax - dmin);
     return Math.floor(d - dmin) / (dmax - dmin) * pmax;
@@ -266,7 +267,7 @@
     }
     console.log(mainUser.sleeps.slice(-1)[0]);
     currentInteractionState.setRange(mainUser.sleeps.slice(-8)[0].start, mainUser.sleeps.slice(-1)[0].end);
-    currentInteractionState.setOverviewRangeRange(mainUser.sleeps[0].start, mainUser.sleeps.slice(-1)[0].end);
+    currentInteractionState.setOverviewRange(mainUser.sleeps[0].start, mainUser.sleeps.slice(-1)[0].end);
     updateOverview();
     updateCurrent();
     resizeChart(chartO, '#overview-chart', currentInteractionState.earliestOverviewDate, currentInteractionState.latestOverviewDate);
