@@ -2,13 +2,14 @@
 (function() {
 
   window.morpheus = {
-    getDataForUser: function(username, earliestDate, latestDate, callback) {
+    getDataForUser: function(callback, username, earliestDate, latestDate) {
       if (earliestDate == null) {
         earliestDate = null;
       }
       if (latestDate == null) {
         latestDate = null;
       }
+      console.log("Trying to get data");
       if ((typeof startTime !== "undefined" && startTime !== null) && (typeof endTime !== "undefined" && endTime !== null)) {
         return $.getJSON('/data/?username=' + username + '&' + 'earliestdate=' + earliestDate + '&' + 'latestdate=' + latestDate, callback);
       } else {

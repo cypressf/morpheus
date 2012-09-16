@@ -4,9 +4,10 @@ body{
     font:1em sans-serif;
 }
 h1{
-    font-size:4em;
-    padding:1em;
-    text-align:center;
+    font-size:2.5em;
+    padding: 0.5em;
+    margin: 0;
+    margin-left: 0.5em;
 }
 a {
     color:#eee;
@@ -27,17 +28,26 @@ a:hover{
 body, html {
     height: 100%;
 }
+
 #overview-wrapper {
     height: 30%;
+    padding: 0.5em;
 }
+
+#overview-chart {
+    width: 100%;
+    height: 100%;
+}
+
 #overview-chart rect {
-    stroke: white;
+    //stroke: white;
     //fill: steelblue;
 }
+
 #current-wrapper {
     height: 60%;
 }
+
 #current-chart rect {
-    stroke: white;
     fill: steelblue;
 }
