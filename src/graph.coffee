@@ -37,9 +37,9 @@ class InteractionState
     setRange : (@earliestDate, @latestDate) ->
     setOverviewRange : (@earliestOverviewDate, @latestOverviewDate) ->
     daysInRange : () ->
-        Math.ceil((@latestDate-@earliestDate)/1000/60/60/24)
+        Math.ceil((@earliestDate-@latestDate)/1000/60/60/24)
     daysInOverviewRange : () ->
-        Math.ceil((@latestOverviewDate-@earliestOverviewDate)/1000/60/60/24)
+        Math.ceil((@earliestOverviewDate-@latestOverviewDate)/1000/60/60/24)
 
 currentInteractionState = new InteractionState()
 
@@ -114,10 +114,11 @@ updateCurrent = ->
 resizeChart = (chart, idStr, dmin, dmax, spacing=1) ->
     state = new InteractionState()
     state.setRange(dmin, dmax)
-    console.log("test")
-    console.log("earliestdate " + state.earliestDate)
-    console.log("latestdate " + state.latestDate)
+    #console.log("test")
+    #console.log("earliestdate " + state.earliestDate)
+    #console.log("latestdate " + state.latestDate)
     elementCount = state.daysInRange()
+    console.log elementCount
     h = $(idStr).height() - globalChartCOffset.top
     tw = $(idStr).width()
     w = tw/(elementCount+spacing/2)
@@ -137,6 +138,9 @@ resizeChart = (chart, idStr, dmin, dmax, spacing=1) ->
         (d, i) ->
             return position(d.start) * h + globalChartCOffset.top)
 
+#xPosition = (d, i, spacing, w, tw, elementCount) ->
+#    return i * (w+spacing) + tw-(w+spacing)*(elementCount+1)
+
 xPosition = (d, pmin, pmax, dmin, dmax) ->
   # convert d variables into a number representing
   # a number of days
@@ -144,7 +148,7 @@ xPosition = (d, pmin, pmax, dmin, dmax) ->
   dmin = dmin.valueOf() / (1000 * 60 * 60 * 24)
   dmax = dmax.valueOf() / (1000 * 60 * 60 * 24)
 
-  console.log(d - dmin) / (dmax - dmin)
+  #console.log(d - dmin) / (dmax - dmin)
 
   Math.floor(d - dmin) / (dmax - dmin) * pmax
 
@@ -200,7 +204,7 @@ dateFromX = (x, dmin, dmax, ymax) ->
   # function that creates a date based on the y position
   # note: doesn't create the correct time
   d = new Date(Math.floor(dmin + y * (dmax - dmin) / ymax ))
-  console.log(d)
+  #console.log(d)
   return d
 
 
@@ -212,7 +216,7 @@ $('#current-chart').mousemove (e) ->
 
     [hours, minutes, seconds] = timeFromY(y/h)
     d = new Date(2012,1,1,hours, minutes, seconds)
-    console.log formatTime(d)
+    #console.log formatTime(d)
     #console.log dateFromPosFrac(x,y/h)
 
 
@@ -221,7 +225,7 @@ window.morpheus.getDataForUser(
         for s in response
             newSleep = new Sleep s.start, s.end
             mainUser.sleeps.push(newSleep)
-        console.log mainUser.sleeps[-1..][0]
+        #console.log mainUser.sleeps[-1..][0]
         currentInteractionState.setRange(mainUser.sleeps[-8..][0].start, mainUser.sleeps[-1..][0].end)
         currentInteractionState.setOverviewRange(mainUser.sleeps[0].start, mainUser.sleeps[-1..][0].end)
         updateOverview()
