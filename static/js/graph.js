@@ -247,12 +247,13 @@
     _ref = timeFromY(y / h), hours = _ref[0], minutes = _ref[1], seconds = _ref[2];
     d = new Date(2012, 1, 1, hours, minutes, seconds);
     console.log(dateFromX(x, currentInteractionState.earliestDate, currentInteractionState.latestDate, $('#current-chart').width()));
-    console.log(e);
-    x = e.pageX - this.offsetLeft;
-    y = e.pageY - this.offsetTop;
-    currentInteractionState.currentBar[0].width = x - currentInteractionState.currentBar[0].x;
-    currentInteractionState.currentBar[0].height = y - currentInteractionState.currentBar[0].y;
-    return refreshUserBar();
+    if (currentInteractionState.dragState === 0) {
+      x = e.pageX - this.offsetLeft;
+      y = e.pageY - this.offsetTop;
+      currentInteractionState.currentBar[0].width = x - currentInteractionState.currentBar[0].x;
+      currentInteractionState.currentBar[0].height = y - currentInteractionState.currentBar[0].y;
+      return refreshUserBar();
+    }
   });
 
   $('#current-chart').mousedown(function(e) {

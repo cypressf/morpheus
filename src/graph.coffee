@@ -197,12 +197,12 @@ $('#current-chart').mousemove (e) ->
     # console.log formatTime(d)
     #console.log dateFromPosFrac(x,y/h)
     
-    console.log e
-    x = e.pageX - this.offsetLeft
-    y = e.pageY - this.offsetTop
-    currentInteractionState.currentBar[0].width = x - currentInteractionState.currentBar[0].x
-    currentInteractionState.currentBar[0].height = y - currentInteractionState.currentBar[0].y
-    refreshUserBar()
+    if currentInteractionState.dragState == 0
+        x = e.pageX - this.offsetLeft
+        y = e.pageY - this.offsetTop
+        currentInteractionState.currentBar[0].width = x - currentInteractionState.currentBar[0].x
+        currentInteractionState.currentBar[0].height = y - currentInteractionState.currentBar[0].y
+        refreshUserBar()
 
 $('#current-chart').mousedown (e) ->
     currentInteractionState.dragState = 1
