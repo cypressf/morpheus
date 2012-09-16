@@ -43,21 +43,6 @@ class InteractionState
 
 currentInteractionState = new InteractionState()
 
-updateOverview = ->
-  h = $('#overview-chart').height()
-  chartO.selectAll("rect").data(mainUser.sleeps)
-      .enter().append("rect")
-      .attr("x",
-          (d, i) ->
-              return i * 6)
-      .attr("y",
-          (d, i) ->
-              return position(d.start) * h)
-      .attr("height",
-          (d, i) ->
-              return (position(d.end) - position(d.start)) * h)
-      .attr("width", 5)
-
 formatTime = (d) ->
     hours = d.getHours(d)
     mins = d.getMinutes(d)+''
@@ -72,6 +57,13 @@ formatTime = (d) ->
         mins = '0'+mins
     return hours + ':' + mins + amPm
 
+updateOverview = ->
+  h = $('#overview-chart').height()
+  chartO.selectAll("rect").data(mainUser.sleeps)
+      .enter().append("rect")
+  
+  resizeChart(chartO, '#overview-chart', currentInteractionState.earliestOverviewDate, currentInteractionState.latestOverviewDate)
+
 updateCurrent = ->
     tick_count = 8
     the_ticks = ticks(tick_count)
@@ -80,18 +72,7 @@ updateCurrent = ->
     chartC.selectAll("rect")
         .data(mainUser.sleeps[-currentInteractionState.daysInRange()..])
         .enter().append("rect")
-        .attr("y",
-            (d, i) ->
-                return position(d.start) * h + globalChartCOffset.top)
-        .attr("height",
-            (d, i) ->
-                return (position(d.end) - position(d.start)) * h)
-        .attr("width",
-            (d, i) ->
-                return 60)
-        .attr("x",
-            (d, i) ->
-                return i*62)
+
     chartC.selectAll("line")
       .data(the_ticks)
       .enter().append("line")
@@ -111,12 +92,11 @@ updateCurrent = ->
       .text((d) -> formatTime(d))
       .attr("text-anchor", "middle")
 
+    resizeChart(chartC, '#current-chart', currentInteractionState.earliestDate, currentInteractionState.latestDate, 10)
+
 resizeChart = (chart, idStr, dmin, dmax, spacing=1) ->
     state = new InteractionState()
     state.setRange(dmin, dmax)
-    #console.log("test")
-    #console.log("earliestdate " + state.earliestDate)
-    #console.log("latestdate " + state.latestDate)
     elementCount = state.daysInRange()
     console.log elementCount
     h = $(idStr).height() - globalChartCOffset.top
@@ -137,9 +117,6 @@ resizeChart = (chart, idStr, dmin, dmax, spacing=1) ->
     .attr("y",
         (d, i) ->
             return position(d.start) * h + globalChartCOffset.top)
-
-#xPosition = (d, i, spacing, w, tw, elementCount) ->
-#    return i * (w+spacing) + tw-(w+spacing)*(elementCount+1)
 
 xPosition = (d, pmin, pmax, dmin, dmax) ->
   # convert d variables into a number representing
@@ -216,7 +193,7 @@ $('#current-chart').mousemove (e) ->
     d = new Date(2012,1,1,hours, minutes, seconds)
 
     console.log dateFromX(x, currentInteractionState.earliestDate, currentInteractionState.latestDate, $('#current-chart').width())
-    #console.log formatTime(d)
+    # console.log formatTime(d)
     #console.log dateFromPosFrac(x,y/h)
 
 
@@ -226,12 +203,12 @@ window.morpheus.getDataForUser(
             newSleep = new Sleep s.start, s.end
             mainUser.sleeps.push(newSleep)
         #console.log mainUser.sleeps[-1..][0]
+        console.log "earliest " + mainUser.sleeps[-8..][0].start
+        console.log "latest " + mainUser.sleeps[-1..][0].end
         currentInteractionState.setRange(mainUser.sleeps[-8..][0].start, mainUser.sleeps[-1..][0].end)
         currentInteractionState.setOverviewRange(mainUser.sleeps[0].start, mainUser.sleeps[-1..][0].end)
         updateOverview()
         updateCurrent()
-        resizeChart(chartO, '#overview-chart', currentInteractionState.earliestOverviewDate, currentInteractionState.latestOverviewDate)
-        resizeChart(chartC, '#current-chart', currentInteractionState.earliestDate, currentInteractionState.latestDate, 10)
         resizeLines()),
     'Gomez')
 
