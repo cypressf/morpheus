@@ -9,12 +9,13 @@ class User
 class Sleep
     constructor: (@start, @end) ->
         @start = new Date(@start)
+        @start.setHours(@start.getHours()+randint(0,3))
         @end = new Date(@end)
 
 class TempBar
     constructor : (@parent, @x, @y, @width, @height) ->
 
-mainUser = new User 'Gomez'
+mainUser = new User 'Jordyn'
 
 chartO = d3.select("#overview-chart")
 chartC = d3.select("#current-chart")

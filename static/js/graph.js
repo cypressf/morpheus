@@ -23,6 +23,7 @@
       this.start = start;
       this.end = end;
       this.start = new Date(this.start);
+      this.start.setHours(this.start.getHours() + randint(0, 3));
       this.end = new Date(this.end);
     }
 
@@ -44,7 +45,7 @@
 
   })();
 
-  mainUser = new User('Gomez');
+  mainUser = new User('Jordyn');
 
   chartO = d3.select("#overview-chart");
 
