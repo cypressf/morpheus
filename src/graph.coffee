@@ -129,6 +129,16 @@ resizeChart = (chart, idStr, elementCount, spacing=1) ->
 xPosition = (d, i, spacing, w, tw, elementCount) ->
     return i * (w+spacing) + tw-(w+spacing)*(elementCount+1)
 
+xPosition = (d, pmin, pmax, dmin, dmax) ->
+  # convert d variables into a number representing
+  # a number of days
+  d = d.valueOf() / (1000 * 60 * 60 * 24)
+  dmin = dmin.valueOf() / (1000 * 60 * 60 * 24)
+  dmax = dmax.valueOf() / (1000 * 60 * 60 * 24)
+  Math.floor(d - dmin) / dmax * pmax
+
+
+
 resizeLines = ->
   h = $('#current-chart').height() - globalChartCOffset.top 
   tw = $('#current-chart').width()
@@ -156,11 +166,11 @@ ticks = (n) ->
   count = [0..n]
   for i in count
     tick = 1/n * i
-    [hours, minutes, seconds] = dateFromPosFrac 1, tick
+    [hours, minutes, seconds] = timeFromY tick
     ticks.push(new Date(2012,1,1,hours, minutes, seconds))
   return ticks
 
-dateFromPosFrac = (x, y) ->
+timeFromY = (y) ->
   y = (y - 0.25) % 1
   y += 1 if y < 0
   hours = y * 24
@@ -168,14 +178,26 @@ dateFromPosFrac = (x, y) ->
   minutes = minute_fraction * 60
   second_fraction = minute_fraction % 1
   seconds = second_fraction * 60
+
   return [hours, minutes, seconds]
+
+dateFromX = (x, dmin, dmax, ymax) ->
+  # convert dates to a number in the unit of days
+  dmin = dmin.valueOf() / (1000 * 60 * 60 * 24)
+  dmax = dmax.valueOf() / (1000 * 60 * 60 * 24)
+
+  # function that creates a date based on the y position
+  # note: doesn't create the correct time
+  d = new Date(Math.floor(dmin + y * (dmax - dmin) / ymax ))
+  console.log(d)
+  return d
 
 $('#current-chart').mousemove (e) ->
     h = $('#current-chart').height() - globalChartCOffset.top
     x = e.pageX - this.offsetLeft
     y = e.pageY - this.offsetTop - globalChartCOffset.top
 
-    [hours, minutes, seconds] = dateFromPosFrac(1, y/h)
+    [hours, minutes, seconds] = timeFromY(y/h)
     d = new Date(2012,1,1,hours, minutes, seconds)
     console.log formatTime(d)
     #console.log dateFromPosFrac(x,y/h)
