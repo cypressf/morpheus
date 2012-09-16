@@ -25,10 +25,10 @@ updateOverview = ->
               return i * 6)
       .attr("y",
           (d, i) ->
-              return d.start.getHours()*10)
+              return position(d.start) * h)
       .attr("height",
-              (d, i) ->
-                  return (d.end.getHours() - d.start.getHours()) * h/25.0)
+          (d, i) ->
+              return (position(d.end) - position(d.start)) * h)
       .attr("width", 5)
   
 updateCurrent = ->
@@ -38,20 +38,20 @@ updateCurrent = ->
         .enter().append("rect")
         .attr("y",
             (d, i) ->
-                return d.start.getHours())
+                return position(d.start) * h)
         .attr("height",
-                (d, i) ->
-                    return (d.end.getHours() - d.start.getHours()) * h/25.0)
+            (d, i) ->
+                return (position(d.end) - position(d.start)) * h)
         .attr("width",
-                (d, i) ->
-                    return 60)
+            (d, i) ->
+                return 60)
         .attr("x",
             (d, i) ->
                 return i*62)
     
 
 resizeChart = (chart, idStr, elementCount, spacing=1) ->
-    h = $(idStr).height()  
+    h = $(idStr).height()
     tw = $(idStr).width()
     w = tw/(elementCount+spacing/2)
     if w < 5
@@ -59,7 +59,7 @@ resizeChart = (chart, idStr, elementCount, spacing=1) ->
     chart.selectAll("rect").transition().duration(0)
     .attr("height",
             (d, i) ->
-                return (d.end.getHours() - d.start.getHours()) * h/25.0)
+                return (position(d.end) - position(d.start)) * h)
     .attr("width",
             (d, i) ->
                 return w)
@@ -67,6 +67,7 @@ resizeChart = (chart, idStr, elementCount, spacing=1) ->
         (d, i) ->
             return (i * (w+spacing)) + (tw-(w+spacing)*(elementCount+1)))
 
+position = (d) -> ((d.getHours() + d.getMinutes() / 60 + d.getSeconds() / (60*60)) / 24 + 0.25) % 1
 
 window.morpheus.getDataForUser(
     ((response) ->
