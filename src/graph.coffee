@@ -197,7 +197,7 @@ $('#current-chart').mousemove (e) ->
     # console.log formatTime(d)
     #console.log dateFromPosFrac(x,y/h)
     
-    if currentInteractionState.dragState == 0
+    if currentInteractionState.dragState == 1
         x = e.pageX - this.offsetLeft
         y = e.pageY - this.offsetTop
         currentInteractionState.currentBar[0].width = x - currentInteractionState.currentBar[0].x
@@ -205,12 +205,14 @@ $('#current-chart').mousemove (e) ->
         refreshUserBar()
 
 $('#current-chart').mousedown (e) ->
+    if currentInteractionState.dragState == 0
+        x = e.pageX - this.offsetLeft
+        y = e.pageY - this.offsetTop
+        temp = new TempBar($('#current-chart'), x, y, 0, 0)
+        #currentInteractionState.currentBar.push(temp)
+        currentInteractionState.currentBar = [temp]
+        createUserBar()
     currentInteractionState.dragState = 1
-    x = e.pageX - this.offsetLeft
-    y = e.pageY - this.offsetTop
-    temp = new TempBar($('#current-chart'), x, y, 200, 200)
-    currentInteractionState.currentBar.push(temp)
-    createUserBar()
 
 $('#current-chart').mouseup (e) ->
    currentInteractionState.dragState = 0 
