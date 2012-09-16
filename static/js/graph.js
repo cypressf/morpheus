@@ -72,7 +72,7 @@
     };
 
     InteractionState.prototype.daysInRange = function() {
-      return Math.ceil((this.earliestDate - this.latestDate) / 1000 / 60 / 60 / 24);
+      return Math.ceil((this.latestDate - this.earliestDate) / 1000 / 60 / 60 / 24);
     };
 
     InteractionState.prototype.daysInOverviewRange = function() {
