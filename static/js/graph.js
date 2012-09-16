@@ -150,11 +150,14 @@
     }).attr("text-anchor", "middle");
   };
 
-  resizeChart = function(chart, idStr, elementCount, spacing) {
-    var h, tw, w;
+  resizeChart = function(chart, idStr, dmin, dmax, spacing) {
+    var elementCount, h, i, tw, w;
     if (spacing == null) {
       spacing = 1;
     }
+    i = new InteractionState();
+    i.setRange(dmin, dmax);
+    elementCount = i.daysInRange();
     h = $(idStr).height() - globalChartCOffset.top;
     tw = $(idStr).width();
     w = tw / (elementCount + spacing / 2);
@@ -166,7 +169,7 @@
     }).attr("width", function(d, i) {
       return w;
     }).attr("x", function(d, i) {
-      return xPosition(d, i, spacing, w, tw, elementCount);
+      return xPosition(d.start, 0, $(idStr).width(), i.earliestDate, i.latestDate);
     }).attr("y", function(d, i) {
       return position(d.start) * h + globalChartCOffset.top;
     });
@@ -179,8 +182,10 @@
   xPosition = function(d, pmin, pmax, dmin, dmax) {
     d = d.valueOf() / (1000 * 60 * 60 * 24);
     dmin = dmin.valueOf() / (1000 * 60 * 60 * 24);
+    console.log(dmin);
     dmax = dmax.valueOf() / (1000 * 60 * 60 * 24);
-    return Math.floor(d - dmin) / dmax * pmax;
+    console.log(d - dmin) / (dmax - dmin);
+    return Math.floor(d - dmin) / (dmax - dmin) * pmax;
   };
 
   resizeLines = function() {
@@ -262,17 +267,17 @@
     }
     console.log(mainUser.sleeps.slice(-1)[0]);
     currentInteractionState.setRange(mainUser.sleeps.slice(-8)[0].start, mainUser.sleeps.slice(-1)[0].end);
-    currentInteractionState.setOverviewRangeRange(mainUser.sleeps[0].start, mainUser.sleeps.slice(-1)[0].end);
+    currentInteractionState.setOverviewRange(mainUser.sleeps[0].start, mainUser.sleeps.slice(-1)[0].end);
     updateOverview();
     updateCurrent();
-    resizeChart(chartO, '#overview-chart', mainUser.sleeps.length);
-    resizeChart(chartC, '#current-chart', currentInteractionState.daysInRange(), 10);
+    resizeChart(chartO, '#overview-chart', currentInteractionState.earliestOverviewDate, currentInteractionState.latestOverviewDate);
+    resizeChart(chartC, '#current-chart', currentInteractionState.earliestDate, currentInteractionState.latestDate, 10);
     return resizeLines();
   }), 'Gomez');
 
   $(window).resize(function() {
-    resizeChart(chartO, '#overview-chart', mainUser.sleeps.length);
-    resizeChart(chartC, '#current-chart', currentInteractionState.daysInRange(), 10);
+    resizeChart(chartO, '#overview-chart', currentInteractionState.earliestOverviewDate, currentInteractionState.latestOverviewDate);
+    resizeChart(chartC, '#current-chart', currentInteractionState.earliestDate, currentInteractionState.latestDate, 10);
     return resizeLines();
   });
 

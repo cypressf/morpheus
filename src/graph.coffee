@@ -111,7 +111,10 @@ updateCurrent = ->
       .text((d) -> formatTime(d))
       .attr("text-anchor", "middle")
 
-resizeChart = (chart, idStr, elementCount, spacing=1) ->
+resizeChart = (chart, idStr, dmin, dmax, spacing=1) ->
+    i = new InteractionState()
+    i.setRange(dmin, dmax)
+    elementCount = i.daysInRange()
     h = $(idStr).height() - globalChartCOffset.top
     tw = $(idStr).width()
     w = tw/(elementCount+spacing/2)
@@ -126,7 +129,7 @@ resizeChart = (chart, idStr, elementCount, spacing=1) ->
                 return w)
     .attr("x",
         (d, i) ->
-            xPosition(d, i, spacing, w, tw, elementCount))
+            xPosition(d.start, 0, $(idStr).width(), i.earliestDate, i.latestDate))
     .attr("y",
         (d, i) ->
             return position(d.start) * h + globalChartCOffset.top)
@@ -140,8 +143,12 @@ xPosition = (d, pmin, pmax, dmin, dmax) ->
   # a number of days
   d = d.valueOf() / (1000 * 60 * 60 * 24)
   dmin = dmin.valueOf() / (1000 * 60 * 60 * 24)
+  console.log(dmin)
   dmax = dmax.valueOf() / (1000 * 60 * 60 * 24)
-  Math.floor(d - dmin) / dmax * pmax
+
+  console.log(d - dmin) / (dmax - dmin)
+
+  Math.floor(d - dmin) / (dmax - dmin) * pmax
 
 
 
@@ -218,17 +225,17 @@ window.morpheus.getDataForUser(
             mainUser.sleeps.push(newSleep)
         console.log mainUser.sleeps[-1..][0]
         currentInteractionState.setRange(mainUser.sleeps[-8..][0].start, mainUser.sleeps[-1..][0].end)
-        currentInteractionState.setOverviewRangeRange(mainUser.sleeps[0].start, mainUser.sleeps[-1..][0].end)
+        currentInteractionState.setOverviewRange(mainUser.sleeps[0].start, mainUser.sleeps[-1..][0].end)
         updateOverview()
         updateCurrent()
-        resizeChart(chartO, '#overview-chart', mainUser.sleeps.length)
-        resizeChart(chartC, '#current-chart', currentInteractionState.daysInRange(), 10)
+        resizeChart(chartO, '#overview-chart', currentInteractionState.earliestOverviewDate, currentInteractionState.latestOverviewDate)
+        resizeChart(chartC, '#current-chart', currentInteractionState.earliestDate, currentInteractionState.latestDate, 10)
         resizeLines()),
     'Gomez')
 
 $(window).resize ->
-    resizeChart(chartO, '#overview-chart', mainUser.sleeps.length)
-    resizeChart(chartC, '#current-chart', currentInteractionState.daysInRange(), 10)
+    resizeChart(chartO, '#overview-chart', currentInteractionState.earliestOverviewDate, currentInteractionState.latestOverviewDate)
+    resizeChart(chartC, '#current-chart', currentInteractionState.earliestDate, currentInteractionState.latestDate, 10)
     resizeLines()
 
 
