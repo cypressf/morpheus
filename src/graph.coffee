@@ -50,8 +50,28 @@ formatTime = (d) ->
     return hours + ':' + mins + amPm
 
 updateOverview = ->
+  tw = $('#overview-chart').width()
   chartO.selectAll(".bar").data(mainUser.sleeps).enter().append("rect").attr("class", "bar")
   resizeChart(chartO, '#overview-chart', overviewState)
+
+  # chartC.selectAll("line")
+  #   .data(the_ticks)
+  #   .enter().append("line")
+  #   .attr("x1", (d) -> position(d) * h)
+  #   .attr("x2", (d) -> position(d) * h)
+  #   .attr("y1", 0)
+  #   .attr("y2", tw)
+  #   .style("stroke", "rgba(100,100,100,0.3)")
+  
+  # chartC.selectAll(".rule")
+  #   .data(the_ticks)
+  #   .enter().append("text")
+  #   .attr("class", "rule")
+  #   .attr("x", (d) -> xPosition(d) * w)
+  #   .attr("y", 0)
+  #   .attr("dy", 20)
+  #   .text((d) -> )
+  #   .attr("text-anchor", "middle")
 
 updateCurrent = ->
     tick_count = 8
@@ -163,6 +183,14 @@ ticks = (n) ->
     [hours, minutes, seconds] = timeFromY tick
     ticks.push(new Date(2012,1,1,hours, minutes, seconds))
   return ticks
+
+# xTicks = (n) ->
+#   ticks = []
+#   count = [0..n]
+#   for i in count
+#     tick = 1/n * i
+#     d = dateFromX
+
 
 timeFromY = (y) ->
   y = (y - 0.25) % 1

@@ -108,6 +108,8 @@
   };
 
   updateOverview = function() {
+    var tw;
+    tw = $('#overview-chart').width();
     chartO.selectAll(".bar").data(mainUser.sleeps).enter().append("rect").attr("class", "bar");
     return resizeChart(chartO, '#overview-chart', overviewState);
   };
