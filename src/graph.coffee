@@ -10,7 +10,17 @@ class Sleep
     constructor: (@start, @end) ->
         @start = new Date(@start)
         @end = new Date(@end)
-        
+
+class TempBar
+    constructor : (@parent, @x, @y, @width, @height) ->
+        $(@parent).append("<rect></rect>")
+          .attr({
+              x: @x
+              y: @y
+              width: @width
+              height: @height
+          })
+
 mainUser = new User 'Gomez'
 
 chartO = d3.select("#overview-chart")
@@ -181,9 +191,6 @@ dateFromX = (x, dmin, dmax, ymax) ->
   d = new Date(Math.floor(dmin + y * (dmax - dmin) / ymax ))
   console.log(d)
   return d
-
-currentInteractionState = 
-  isMakingBar : false
 
 $('#current-chart').mousemove (e) ->
     h = $('#current-chart').height() - globalChartCOffset.top
