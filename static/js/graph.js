@@ -42,7 +42,8 @@
         x: this.x,
         y: this.y,
         width: this.width,
-        height: this.height
+        height: this.height,
+        fill: 'red'
       });
     }
 
@@ -64,6 +65,7 @@
 
     function InteractionState() {
       this.isMakingBar = false;
+      this.isDragging = 0;
     }
 
     InteractionState.prototype.setRange = function(earliestDate, latestDate) {
@@ -71,8 +73,17 @@
       this.latestDate = latestDate;
     };
 
+    InteractionState.prototype.setOverviewRange = function(earliestOverviewDate, latestOverviewDate) {
+      this.earliestOverviewDate = earliestOverviewDate;
+      this.latestOverviewDate = latestOverviewDate;
+    };
+
     InteractionState.prototype.daysInRange = function() {
       return Math.ceil((this.latestDate - this.earliestDate) / 1000 / 60 / 60 / 24);
+    };
+
+    InteractionState.prototype.daysInOverviewRange = function() {
+      return Math.ceil((this.latestOverviewDate - this.earliestOverviewDate) / 1000 / 60 / 60 / 24);
     };
 
     return InteractionState;
@@ -250,7 +261,8 @@
       mainUser.sleeps.push(newSleep);
     }
     console.log(mainUser.sleeps.slice(-1)[0]);
-    currentInteractionState.setRange(mainUser.sleeps.slice(-1)[0].end, mainUser.sleeps.slice(-8)[0].start);
+    currentInteractionState.setRange(mainUser.sleeps.slice(-8)[0].start, mainUser.sleeps.slice(-1)[0].end);
+    currentInteractionState.setOverviewRangeRange(mainUser.sleeps[0].start, mainUser.sleeps.slice(-1)[0].end);
     updateOverview();
     updateCurrent();
     resizeChart(chartO, '#overview-chart', mainUser.sleeps.length);

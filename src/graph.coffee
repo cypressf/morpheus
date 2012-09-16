@@ -13,12 +13,14 @@ class Sleep
 
 class TempBar
     constructor : (@parent, @x, @y, @width, @height) ->
+        
         $(@parent).append("<rect></rect>")
           .attr({
               x: @x
               y: @y
               width: @width
               height: @height
+              fill: 'red'
           })
 
 mainUser = new User 'Gomez'
@@ -31,9 +33,13 @@ globalChartCOffset =
 class InteractionState
     constructor : () ->
         @isMakingBar = false
+        @isDragging = 0
     setRange : (@earliestDate, @latestDate) ->
+    setOverviewRange : (@earliestOverviewDate, @latestOverviewDate) ->
     daysInRange : () ->
         Math.ceil((@latestDate-@earliestDate)/1000/60/60/24)
+    daysInOverviewRange : () ->
+        Math.ceil((@latestOverviewDate-@earliestOverviewDate)/1000/60/60/24)
 
 currentInteractionState = new InteractionState()
 
@@ -192,6 +198,8 @@ dateFromX = (x, dmin, dmax, ymax) ->
   console.log(d)
   return d
 
+
+#temp = new TempBar($('#current-chart'), 0, 0, 200, 200)
 $('#current-chart').mousemove (e) ->
     h = $('#current-chart').height() - globalChartCOffset.top
     x = e.pageX - this.offsetLeft
@@ -209,7 +217,8 @@ window.morpheus.getDataForUser(
             newSleep = new Sleep s.start, s.end
             mainUser.sleeps.push(newSleep)
         console.log mainUser.sleeps[-1..][0]
-        currentInteractionState.setRange(mainUser.sleeps[-1..][0].end, mainUser.sleeps[-8..][0].start)
+        currentInteractionState.setRange(mainUser.sleeps[-8..][0].start, mainUser.sleeps[-1..][0].end)
+        currentInteractionState.setOverviewRangeRange(mainUser.sleeps[0].start, mainUser.sleeps[-1..][0].end)
         updateOverview()
         updateCurrent()
         resizeChart(chartO, '#overview-chart', mainUser.sleeps.length)
