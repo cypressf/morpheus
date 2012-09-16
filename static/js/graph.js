@@ -57,8 +57,7 @@
   InteractionState = (function() {
 
     function InteractionState() {
-      this.isMakingBar = false;
-      this.isDragging = 0;
+      this.dragState = 0;
     }
 
     InteractionState.prototype.setRange = function(earliestDate, latestDate) {
@@ -247,14 +246,28 @@
     y = e.pageY - this.offsetTop - globalChartCOffset.top;
     _ref = timeFromY(y / h), hours = _ref[0], minutes = _ref[1], seconds = _ref[2];
     d = new Date(2012, 1, 1, hours, minutes, seconds);
-    return console.log(dateFromX(x, currentInteractionState.earliestDate, currentInteractionState.latestDate, $('#current-chart').width()));
+    console.log(dateFromX(x, currentInteractionState.earliestDate, currentInteractionState.latestDate, $('#current-chart').width()));
+    if (currentInteractionState.dragState === 0) {
+      x = e.pageX - this.offsetLeft;
+      y = e.pageY - this.offsetTop;
+      currentInteractionState.currentBar[0].width = x - currentInteractionState.currentBar[0].x;
+      currentInteractionState.currentBar[0].height = y - currentInteractionState.currentBar[0].y;
+      return refreshUserBar();
+    }
   });
 
-  $('#current-chart').click(function(e) {
-    var temp;
-    temp = new TempBar($('#current-chart'), 0, 0, 200, 200);
+  $('#current-chart').mousedown(function(e) {
+    var temp, x, y;
+    currentInteractionState.dragState = 1;
+    x = e.pageX - this.offsetLeft;
+    y = e.pageY - this.offsetTop;
+    temp = new TempBar($('#current-chart'), x, y, 200, 200);
     currentInteractionState.currentBar.push(temp);
     return createUserBar();
+  });
+
+  $('#current-chart').mouseup(function(e) {
+    return currentInteractionState.dragState = 0;
   });
 
   window.morpheus.getDataForUser((function(response) {
