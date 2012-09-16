@@ -32,7 +32,7 @@ updateOverview = ->
       .attr("width", 5)
   
 updateCurrent = ->
-    h = $('#current-chart').height()                     
+    h = $('#current-chart').height()  
     chartC.selectAll("rect")
         .data(mainUser.sleeps[-7..])
         .enter().append("rect")
