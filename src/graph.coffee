@@ -9,8 +9,10 @@ class User
 class Sleep
     constructor: (@start, @end) ->
         @start = new Date(@start)
-        @start.setHours(@start.getHours()+randint(0,3))
+        #total = randint(0,3)
+        #@start.setHours(@start.getHours()+total)
         @end = new Date(@end)
+        #@start.setHours(@start.getHours()+total)        
 
 class TempBar
     constructor : (@parent, @x, @y, @width, @height) ->
