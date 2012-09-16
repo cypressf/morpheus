@@ -9,7 +9,8 @@ h1{
     margin: 0;
     margin-left: 0.5em;
 }
-a {
+
+/*a {
     color:#eee;
     margin:0 auto;
     font-size:2em;
@@ -20,7 +21,7 @@ a {
     border-radius:0.5em;
     text-decoration:none;
     display:block;
-}
+}*/
 a:hover{
     background:#171717;
 }

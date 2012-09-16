@@ -2,9 +2,15 @@
 {% load url from future %}
 
 {% block content %}
+<style>
+  h1 {
+    display: none;  
+  }
+</style>
   {% for name in social_auth.backends.openid %}
   {% if name == 'google' %}
-    <a rel="nofollow" href="{% url "socialauth_begin" name %}">Login with {{ name|title }}</a>
+    <a rel="nofollow" href="{% url "socialauth_begin" name %}"><img src='/static/images/FrontPage.png' alt='main image'></img></a>
+    <!--<a rel="nofollow" href="{% url "socialauth_begin" name %}">Sign in with {{ name|title }}</a>-->
     {% endif %}
   {% endfor %}
 {% endblock content %}
