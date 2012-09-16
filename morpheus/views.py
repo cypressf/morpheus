@@ -53,7 +53,7 @@ def getdata(request):
         u = User.objects.filter(username__exact = username)
         print u
     if u:
-        sleeps = Sleep.objects.filter(user__username = username)
+        sleeps = Sleep.objects.filter(user__username = username).order_by('start')
     if u and ('earliestdate' in request.GET):
         earliestdate = datetime.fromtimestamp(request.GET['earliestdate'] / 1000.0)
         sleeps = sleeps.filter(start__gte = earliestdate)

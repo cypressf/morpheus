@@ -87,18 +87,6 @@
 
   currentInteractionState = new InteractionState();
 
-  updateOverview = function() {
-    var h;
-    h = $('#overview-chart').height();
-    return chartO.selectAll(".bar").data(mainUser.sleeps).enter().append("rect").attr("class", "bar").attr("x", function(d, i) {
-      return i * 6;
-    }).attr("y", function(d, i) {
-      return position(d.start) * h;
-    }).attr("height", function(d, i) {
-      return (position(d.end) - position(d.start)) * h;
-    }).attr("width", 5);
-  };
-
   formatTime = function(d) {
     var amPm, hours, mins;
     hours = d.getHours(d);
@@ -118,31 +106,29 @@
     return hours + ':' + mins + amPm;
   };
 
+  updateOverview = function() {
+    chartO.selectAll(".bar").data(mainUser.sleeps).enter().append("rect").attr("class", "bar");
+    return resizeChart(chartO, '#overview-chart', currentInteractionState.earliestOverviewDate, currentInteractionState.latestOverviewDate);
+  };
+
   updateCurrent = function() {
     var h, the_ticks, tick_count, tw;
     tick_count = 8;
     the_ticks = ticks(tick_count);
     h = $('#current-chart').height() - globalChartCOffset.top;
     tw = $('#current-chart').width();
-    chartC.selectAll(".bar").data(mainUser.sleeps.slice(-currentInteractionState.daysInRange())).enter().append("rect").attr("class", "bar").attr("y", function(d, i) {
-      return position(d.start) * h + globalChartCOffset.top;
-    }).attr("height", function(d, i) {
-      return (position(d.end) - position(d.start)) * h;
-    }).attr("width", function(d, i) {
-      return 60;
-    }).attr("x", function(d, i) {
-      return i * 62;
-    });
+    chartC.selectAll(".bar").data(mainUser.sleeps.slice(-currentInteractionState.daysInRange())).enter().append("rect").attr("class", "bar");
     chartC.selectAll("line").data(the_ticks).enter().append("line").attr("y1", function(d) {
       return position(d) * h;
     }).attr("y2", function(d) {
       return position(d) * h;
     }).attr("x1", 0).attr("x2", tw).style("stroke", "rgba(100,100,100,0.3)");
-    return chartC.selectAll(".rule").data(the_ticks).enter().append("text").attr("class", "rule").attr("y", function(d) {
+    chartC.selectAll(".rule").data(the_ticks).enter().append("text").attr("class", "rule").attr("y", function(d) {
       return position(d) * h;
     }).attr("x", 0).attr("dx", 20).text(function(d) {
       return formatTime(d);
     }).attr("text-anchor", "middle");
+    return resizeChart(chartC, '#current-chart', currentInteractionState.earliestDate, currentInteractionState.latestDate, 10);
   };
 
   updateUserBar = function() {
@@ -241,11 +227,11 @@
     return [hours, minutes, seconds];
   };
 
-  dateFromX = function(x, dmin, dmax, ymax) {
+  dateFromX = function(x, dmin, dmax, xmax) {
     var d;
     dmin = dmin.valueOf() / (1000 * 60 * 60 * 24);
     dmax = dmax.valueOf() / (1000 * 60 * 60 * 24);
-    d = new Date(Math.floor(dmin + y * (dmax - dmin) / ymax));
+    d = new Date(Math.floor(dmin + x * (dmax - dmin) / xmax) * (1000 * 60 * 60 * 24));
     return d;
   };
 
@@ -261,7 +247,8 @@
     x = e.pageX - this.offsetLeft;
     y = e.pageY - this.offsetTop - globalChartCOffset.top;
     _ref = timeFromY(y / h), hours = _ref[0], minutes = _ref[1], seconds = _ref[2];
-    return d = new Date(2012, 1, 1, hours, minutes, seconds);
+    d = new Date(2012, 1, 1, hours, minutes, seconds);
+    return console.log(dateFromX(x, currentInteractionState.earliestDate, currentInteractionState.latestDate, $('#current-chart').width()));
   });
 
   window.morpheus.getDataForUser((function(response) {
@@ -271,12 +258,12 @@
       newSleep = new Sleep(s.start, s.end);
       mainUser.sleeps.push(newSleep);
     }
+    console.log("earliest " + mainUser.sleeps.slice(-8)[0].start);
+    console.log("latest " + mainUser.sleeps.slice(-1)[0].end);
     currentInteractionState.setRange(mainUser.sleeps.slice(-8)[0].start, mainUser.sleeps.slice(-1)[0].end);
     currentInteractionState.setOverviewRange(mainUser.sleeps[0].start, mainUser.sleeps.slice(-1)[0].end);
     updateOverview();
     updateCurrent();
-    resizeChart(chartO, '#overview-chart', currentInteractionState.earliestOverviewDate, currentInteractionState.latestOverviewDate);
-    resizeChart(chartC, '#current-chart', currentInteractionState.earliestDate, currentInteractionState.latestDate, 10);
     return resizeLines();
   }), 'Gomez');
 
