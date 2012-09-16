@@ -101,10 +101,14 @@ resizeChart = (chart, idStr, elementCount, spacing=1) ->
                 return w)
     .attr("x",
         (d, i) ->
-            return (i * (w+spacing)) + (tw-(w+spacing)*(elementCount+1)))
+            xPosition(d, i, spacing, w, tw, elementCount))
     .attr("y",
         (d, i) ->
             return position(d.start) * h + globalChartCOffset.top)
+
+
+xPosition = (d, i, spacing, w, tw, elementCount) ->
+    return i * (w+spacing) + tw-(w+spacing)*(elementCount+1)
 
 resizeLines = ->
   h = $('#current-chart').height() - globalChartCOffset.top 
@@ -126,32 +130,26 @@ position = (d) ->
 
 window.position = position
 
-dateFromPosFrac = (x,y) ->
-  vert = (y-0.25)%1
-  vertScaled = vert * 24
-  hours = vertScaled
-  minutes = (hours%1)*60
-  seconds = (minutes%1)*60*60
-  d = new Date()
-  d.setHours(hours)
-  d.setMinutes(minutes)
-  d.setSeconds(seconds)
-  return d
-  #return hours
 
 # you want n ticks on the graph: here're the dates you need
 ticks = (n) ->
   ticks = []
-  for tick in [0..1] by 1 / n
-    tick = (tick - 0.25) % 1
-    tick += 1 if tick < 0
-    hours = tick * 24
-    minute_fraction = hours % 1
-    minutes = minute_fraction * 60
-    second_fraction = minute_fraction % 1
-    seconds = second_fraction * 60
+  count = [0..n]
+  for i in count
+    tick = 1/n * i
+    [hours, minutes, seconds] = dateFromPosFrac 1, tick
     ticks.push(new Date(2012,1,1,hours, minutes, seconds))
   return ticks
+
+dateFromPosFrac = (x, y) ->
+  y = (y - 0.25) % 1
+  y += 1 if y < 0
+  hours = y * 24
+  minute_fraction = hours % 1
+  minutes = minute_fraction * 60
+  second_fraction = minute_fraction % 1
+  seconds = second_fraction * 60
+  return [hours, minutes, seconds]
 
 currentInteractionState = 
   isMakingBar : false
@@ -159,10 +157,11 @@ currentInteractionState =
 $('#current-chart').mousemove (e) ->
     h = $('#current-chart').height() - globalChartCOffset.top
     x = e.pageX - this.offsetLeft
-    y = e.pageY - this.offsetTop + globalChartCOffset.top
+    y = e.pageY - this.offsetTop - globalChartCOffset.top
 
-    d = dateFromPosFrac(x,y/h)
-    #console.log formatTime(d)
+    [hours, minutes, seconds] = dateFromPosFrac(1, y/h)
+    d = new Date(2012,1,1,hours, minutes, seconds)
+    console.log formatTime(d)
     #console.log dateFromPosFrac(x,y/h)
 
 
@@ -182,4 +181,51 @@ $(window).resize ->
     resizeChart(chartO, '#overview-chart', mainUser.sleeps.length)
     resizeChart(chartC, '#current-chart', 7, 10)
     resizeLines()
+
+
+# using jQuery
+getCookie = (name) ->
+    cookieValue = null
+    if (document.cookie && document.cookie != '')
+        cookies = document.cookie.split(';')
+        for cookie in cookies 
+            cookie = jQuery.trim(cookie)
+            # Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) 
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+                break
+    return cookieValue
+
+csrfSafeMethod = (method) ->
+    # these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method))
+
+$.ajaxSetup(
+    crossDomain: false # obviates need for sameOrigin test
+    beforeSend: (xhr, settings) ->
+      if (!csrfSafeMethod(settings.type)) 
+          xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'))
+)
+
+# $('#current-chart').mousedown (e) ->
+#     $('#current-chart').mousemove (e) ->
+
+#     $('#current-chart').mouseup (e) ->
+      
+
+#     x = e.pageX - this.offsetLeft
+#     y = e.pageY - this.offsetTop
+#     h = $("#current-chart").height()
+#     w = $("#current-chart").width()
+
+#     [hours, minutes, seconds] = dateFromPosFrac(1, y / h)
+
+#     start = new Date(2012,9,16,hours, minutes, seconds).valueOf()
+#     end = new Date().valueOf()
+#     data = 
+#       "username": '{{ user.username }}'
+#       "start": start
+#       "end": end
+#     $.post("/postdata/", data)
+#     return false
 
