@@ -9,7 +9,7 @@ class User
 class Sleep
     constructor: (@start, @end) ->
         @start = new Date(@start)
-        #total = randint(0,3)
+        total = randint(0,3)
         #@start.setHours(@start.getHours()+total)
         @end = new Date(@end)
         #@start.setHours(@start.getHours()+total)        
